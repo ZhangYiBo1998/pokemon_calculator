@@ -1,510 +1,573 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>宝可梦属性克制计算器 | 太晶化参考 + 双属性抗性</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: system-ui, 'Segoe UI', 'Helvetica Neue', 'Noto Sans', sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>宝可梦属性克制计算器 | 太晶化参考 + 双属性抗性</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, 'Segoe UI', 'Helvetica Neue', 'Noto Sans', sans-serif;
+    }
 
-        body {
-            background: #f0f2f5;
-            margin: 0;
-            padding: 16px 12px;
-            color: #1e2a3a;
-        }
+    body {
+      background: #f0f2f5;
+      margin: 0;
+      padding: 16px 12px;
+      color: #1e2a3a;
+    }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
 
-        /* 标题区 */
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+    /* 标题区 */
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
 
-        .header h1 {
-            font-size: 1.6rem;
-        }
+    .header h1 {
+      font-size: 1.6rem;
+    }
 
-        .sub {
-            color: #4a5b6e;
-            font-size: 0.85rem;
-            border-top: 1px solid #dce3ec;
-            display: inline-block;
-            padding-top: 5px;
-        }
+    .sub {
+      color: #4a5b6e;
+      font-size: 0.85rem;
+      border-top: 1px solid #dce3ec;
+      display: inline-block;
+      padding-top: 5px;
+    }
 
-        /* 双属性选择卡 */
-        .selector-card {
-            background: white;
-            border-radius: 24px;
-            box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.05);
-            padding: 1.2rem 1.2rem;
-            margin-bottom: 24px;
-        }
+    /* 双属性选择卡 */
+    .selector-card {
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.05);
+      padding: 1.2rem 1.2rem;
+      margin-bottom: 24px;
+    }
 
-        .selector-title {
-            font-weight: 600;
-            font-size: 1.15rem;
-            margin-bottom: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: #2c3e4e;
-        }
+    .selector-title {
+      font-weight: 600;
+      font-size: 1.15rem;
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #2c3e4e;
+    }
 
-        .selector-title:before {
-            content: "⚔️";
-            font-size: 1.2rem;
-        }
+    .selector-title:before {
+      content: "⚔️";
+      font-size: 1.2rem;
+    }
 
-        .dual-select {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            align-items: flex-end;
-            margin-bottom: 16px;
-        }
+    .dual-select {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: flex-end;
+      margin-bottom: 16px;
+    }
 
-        .select-group {
-            flex: 1;
-            min-width: 140px;
-        }
+    .select-group {
+      flex: 1;
+      min-width: 140px;
+    }
 
-        .select-group label {
-            display: block;
-            font-size: 0.75rem;
-            font-weight: 500;
-            margin-bottom: 6px;
-            color: #4a627a;
-        }
+    .select-group label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: #4a627a;
+    }
 
-        select {
-            width: 100%;
-            padding: 10px 12px;
-            font-size: 0.9rem;
-            background: #f9fafc;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 28px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: 0.2s;
-            color: #1e293b;
-        }
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 0.9rem;
+      background: #f9fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 28px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: 0.2s;
+      color: #1e293b;
+    }
 
-        .badge-combo {
-            background: #eef2ff;
-            padding: 10px 14px;
-            border-radius: 40px;
-            display: inline-flex;
-            align-items: baseline;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 8px;
-            font-size: 0.85rem;
-        }
+    .badge-combo {
+      background: #eef2ff;
+      padding: 10px 14px;
+      border-radius: 40px;
+      display: inline-flex;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+      font-size: 0.85rem;
+    }
 
-        .combo-type {
-            font-weight: 700;
-            font-size: 1.1rem;
-            background: #2d3e50;
-            color: white;
-            padding: 4px 14px;
-            border-radius: 40px;
-        }
+    .combo-type {
+      font-weight: 700;
+      font-size: 1.1rem;
+      background: #2d3e50;
+      color: white;
+      padding: 4px 14px;
+      border-radius: 40px;
+    }
 
-        .combo-note {
-            font-size: 0.75rem;
-            color: #3b5c7a;
-        }
+    .combo-note {
+      font-size: 0.75rem;
+      color: #3b5c7a;
+    }
 
-        /* 太晶化独立区域 */
-        .terastal-section {
-            background: linear-gradient(135deg, #f8f0ff 0%, #f0e6ff 100%);
-            border-radius: 24px;
-            padding: 1rem 1.2rem;
-            margin-bottom: 24px;
-            border: 1px solid #d9b8ff;
-        }
+    /* 太晶化独立区域 */
+    .terastal-section {
+      background: linear-gradient(135deg, #f8f0ff 0%, #f0e6ff 100%);
+      border-radius: 24px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 24px;
+      border: 1px solid #d9b8ff;
+    }
 
-        .terastal-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-        }
+    .terastal-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
 
-        .terastal-header h3 {
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin: 0;
-        }
+    .terastal-header h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 0;
+    }
 
-        .terastal-badge {
-            background: #7c3aed;
-            color: white;
-            padding: 3px 10px;
-            border-radius: 40px;
-            font-size: 0.7rem;
-        }
+    .terastal-badge {
+      background: #7c3aed;
+      color: white;
+      padding: 3px 10px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+    }
 
-        .tera-select-group {
-            margin-bottom: 14px;
-        }
+    .tera-select-group {
+      margin-bottom: 14px;
+    }
 
-        .tera-select-group select {
-            background: white;
-            border-color: #d9b8ff;
-        }
+    .tera-select-group select {
+      background: white;
+      border-color: #d9b8ff;
+    }
 
-        .tera-note {
-            font-size: 0.7rem;
-            color: #6b21a5;
-            background: #f3e8ff;
-            padding: 5px 10px;
-            border-radius: 20px;
-            display: inline-block;
-        }
+    .tera-note {
+      font-size: 0.7rem;
+      color: #6b21a5;
+      background: #f3e8ff;
+      padding: 5px 10px;
+      border-radius: 20px;
+      display: inline-block;
+    }
 
-        .tera-result-title {
-            font-weight: 600;
-            font-size: 0.85rem;
-            margin: 10px 0 8px 0;
-            color: #4c1d95;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+    .tera-result-title {
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin: 10px 0 8px 0;
+      color: #4c1d95;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
 
-        /* 结果展示区 */
-        .result-section {
-            background: white;
-            border-radius: 24px;
-            box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-            margin-bottom: 24px;
-        }
+    /* 结果展示区 */
+    .result-section {
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
 
-        .result-header {
-            background: #1e2a36;
-            color: white;
-            padding: 0.8rem 1.2rem;
-            font-weight: 600;
-            font-size: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
+    .result-header {
+      background: #1e2a36;
+      color: white;
+      padding: 0.8rem 1.2rem;
+      font-weight: 600;
+      font-size: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
 
-        .sort-buttons {
-            display: flex;
-            gap: 8px;
-        }
+    .sort-buttons {
+      display: flex;
+      gap: 8px;
+    }
 
-        .sort-btn {
-            background: #334155;
-            border: none;
-            color: white;
-            padding: 4px 10px;
-            border-radius: 40px;
-            font-size: 0.7rem;
-            cursor: pointer;
-            font-weight: 500;
-        }
+    .sort-btn {
+      background: #334155;
+      border: none;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      font-weight: 500;
+    }
 
-        .grid-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 8px;
-            padding: 1rem;
-            background: #ffffff;
-        }
+    .grid-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 8px;
+      padding: 1rem;
+      background: #ffffff;
+    }
 
-        .type-card {
-            border-radius: 40px;
-            padding: 6px 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: 0.1s;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-            font-weight: 500;
-            border-left: 4px solid rgba(0,0,0,0.2);
-        }
+    .type-card {
+      border-radius: 40px;
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: 0.1s;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      font-weight: 500;
+      border-left: 4px solid rgba(0, 0, 0, 0.2);
+    }
 
-        .type-name {
-            font-weight: 700;
-            font-size: 0.85rem;
-            text-shadow: 0 0 1px rgba(0,0,0,0.05);
-        }
+    .type-name {
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-shadow: 0 0 1px rgba(0, 0, 0, 0.05);
+    }
 
-        .multiplier {
-            font-weight: 800;
-            font-size: 1.5rem;
-            font-family: monospace;
-            background: rgba(255,255,255,0.7);
-            padding: 2px 8px;
-            border-radius: 40px;
-            min-width: 48px;
-            text-align: center;
-        }
+    .multiplier {
+      font-weight: 800;
+      font-size: 1.5rem;
+      font-family: monospace;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 2px 8px;
+      border-radius: 40px;
+      min-width: 48px;
+      text-align: center;
+    }
 
-        /* 倍率配色 */
-        .weak .multiplier { color: #b71c1c; background: #ffebee; }
-        .resist .multiplier { color: #0d3c6e; background: #e3f2fd; }
-        .normal .multiplier { color: #1b5e20; background: #e8f5e9; }
-        .immune .multiplier { color: #37474f; background: #eceff1; text-decoration: line-through; }
+    /* 倍率配色 */
+    .weak .multiplier {
+      color: #b71c1c;
+      background: #ffebee;
+    }
 
-        /* 完整克制表 */
-        .matrix-section {
-            background: white;
-            border-radius: 24px;
-            box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.05);
-            overflow-x: auto;
-            padding: 0 0 0.8rem 0;
-        }
+    .resist .multiplier {
+      color: #0d3c6e;
+      background: #e3f2fd;
+    }
 
-        .matrix-title {
-            padding: 1rem 1.2rem;
-            font-weight: 600;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #1f2a3e;
-            flex-wrap: wrap;
-        }
+    .normal .multiplier {
+      color: #1b5e20;
+      background: #e8f5e9;
+    }
 
-        .matrix-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 1rem;
-            min-width: 600px;
-            font-weight: 500;
-        }
+    .immune .multiplier {
+      color: #37474f;
+      background: #eceff1;
+      text-decoration: line-through;
+    }
 
-        .matrix-table th {
-            padding: 6px 3px;
-            text-align: center;
-            border: 1px solid #dce5ef;
-        }
+    /* 完整克制表 */
+    .matrix-section {
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.05);
+      overflow-x: auto;
+      padding: 0 0 0.8rem 0;
+    }
 
-        .matrix-table td {
-            padding: 10px 3px;
-            text-align: center;
-            border: 1px solid #dce5ef;
-        }
+    .matrix-title {
+      padding: 1rem 1.2rem;
+      font-weight: 600;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #1f2a3e;
+      flex-wrap: wrap;
+    }
 
-        .matrix-table th {
-            font-weight: 700;
-            position: sticky;
-            top: 0;
-            font-size: 0.7rem;
-        }
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 1rem;
+      min-width: 600px;
+      font-weight: 500;
+    }
 
-        .cell-2 { background-color: #d32f2f; color: white; font-weight: bold; }
-        .cell-1 { background-color: #f5f7fa; color: #2c3e4e; }
-        .cell-05 { background-color: #2e7d32; color: white; font-weight: bold; }
-        .cell-0 { background-color: #5d6d7e; color: #e0e0e0; font-weight: bold; text-decoration: line-through; }
+    .matrix-table th {
+      padding: 6px 3px;
+      text-align: center;
+      border: 1px solid #dce5ef;
+    }
 
-        .footnote {
-            text-align: center;
-            font-size: 0.65rem;
-            color: #5f6f87;
-            margin-top: 12px;
-            padding: 6px;
-        }
+    .matrix-table td {
+      padding: 10px 3px;
+      text-align: center;
+      border: 1px solid #dce5ef;
+    }
 
-        /* ========= 手机端深度优化 ========= */
-        @media (max-width: 640px) {
-            body {
-                padding: 12px 10px;
-            }
-            .header h1 {
-                font-size: 1.4rem;
-            }
-            .selector-card {
-                padding: 1rem;
-            }
-            .dual-select {
-                flex-direction: column;
-                gap: 12px;
-            }
-            .select-group {
-                min-width: 100%;
-            }
-            .grid-list {
-                grid-template-columns: repeat(2, 1fr);  /* 手机两列布局 */
-                gap: 8px;
-                padding: 0.8rem;
-            }
-            .type-card {
-                padding: 5px 8px;
-            }
-            .type-name {
-                font-size: 0.8rem;
-            }
-            .multiplier {
-                font-size: 0.9rem;
-                min-width: 42px;
-                padding: 2px 6px;
-            }
-            .result-header {
-                flex-direction: column;
-                align-items: flex-start;
-                padding: 0.7rem 1rem;
-            }
-            .sort-buttons {
-                align-self: flex-end;
-            }
-            .terastal-section {
-                padding: 0.9rem 1rem;
-            }
-            .tera-select-group select {
-                font-size: 0.85rem;
-                padding: 8px 10px;
-            }
-            .tera-result-title {
-                font-size: 0.8rem;
-            }
-            .matrix-title {
-                padding: 0.8rem 1rem;
-                font-size: 0.9rem;
-            }
-            .matrix-table th, .matrix-table td {
-                padding: 4px 2px;
-            }
-            .badge-combo {
-                padding: 8px 12px;
-            }
-            .combo-type {
-                font-size: 0.95rem;
-                padding: 3px 12px;
-            }
-            .combo-note {
-                font-size: 0.7rem;
-            }
-            .tera-note {
-                font-size: 0.65rem;
-            }
-        }
+    .matrix-table th {
+      font-weight: 700;
+      position: sticky;
+      top: 0;
+      font-size: 0.7rem;
+    }
 
-        /* 超小屏幕（折叠屏）进一步优化 */
-        @media (max-width: 375px) {
-            .grid-list {
-                grid-template-columns: 1fr;  /* 极小屏幕单列，避免文字挤压 */
-            }
-            .type-card {
-                max-width: 100%;
-            }
-            .matrix-table {
-                font-size: 0.65rem;
-                min-width: 550px;
-            }
-            .matrix-table th, .matrix-table td {
-                padding: 4px 2px;
-            }
-        }
-    </style>
+    .cell-2 {
+      background-color: #d32f2f;
+      color: white;
+      font-weight: bold;
+    }
+
+    .cell-1 {
+      background-color: #f5f7fa;
+      color: #2c3e4e;
+    }
+
+    .cell-05 {
+      background-color: #2e7d32;
+      color: white;
+      font-weight: bold;
+    }
+
+    .cell-0 {
+      background-color: #5d6d7e;
+      color: #e0e0e0;
+      font-weight: bold;
+      text-decoration: line-through;
+    }
+
+    .footnote {
+      text-align: center;
+      font-size: 0.65rem;
+      color: #5f6f87;
+      margin-top: 12px;
+      padding: 6px;
+    }
+
+    /* ========= 手机端深度优化 ========= */
+    @media (max-width: 640px) {
+      body {
+        padding: 12px 10px;
+      }
+
+      .header h1 {
+        font-size: 1.4rem;
+      }
+
+      .selector-card {
+        padding: 1rem;
+      }
+
+      .dual-select {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .select-group {
+        min-width: 100%;
+      }
+
+      .grid-list {
+        grid-template-columns: repeat(2, 1fr);
+        /* 手机两列布局 */
+        gap: 8px;
+        padding: 0.8rem;
+      }
+
+      .type-card {
+        padding: 5px 8px;
+      }
+
+      .type-name {
+        font-size: 0.8rem;
+      }
+
+      .multiplier {
+        font-size: 0.9rem;
+        min-width: 42px;
+        padding: 2px 6px;
+      }
+
+      .result-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0.7rem 1rem;
+      }
+
+      .sort-buttons {
+        align-self: flex-end;
+      }
+
+      .terastal-section {
+        padding: 0.9rem 1rem;
+      }
+
+      .tera-select-group select {
+        font-size: 0.85rem;
+        padding: 8px 10px;
+      }
+
+      .tera-result-title {
+        font-size: 0.8rem;
+      }
+
+      .matrix-title {
+        padding: 0.8rem 1rem;
+        font-size: 0.9rem;
+      }
+
+      .matrix-table th,
+      .matrix-table td {
+        padding: 4px 2px;
+      }
+
+      .badge-combo {
+        padding: 8px 12px;
+      }
+
+      .combo-type {
+        font-size: 0.95rem;
+        padding: 3px 12px;
+      }
+
+      .combo-note {
+        font-size: 0.7rem;
+      }
+
+      .tera-note {
+        font-size: 0.65rem;
+      }
+    }
+
+    /* 超小屏幕（折叠屏）进一步优化 */
+    @media (max-width: 375px) {
+      .grid-list {
+        grid-template-columns: 1fr;
+        /* 极小屏幕单列，避免文字挤压 */
+      }
+
+      .type-card {
+        max-width: 100%;
+      }
+
+      .matrix-table {
+        font-size: 0.65rem;
+        min-width: 550px;
+      }
+
+      .matrix-table th,
+      .matrix-table td {
+        padding: 4px 2px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-<div class="container">
+  <div class="container">
     <div class="header">
-        <h1>✨ 宝可梦属性克制计算器 ✨</h1>
-        <div class="sub">双属性抗性 · 太晶化战术参考 · 高对比克制矩阵</div>
+      <h1>✨ 宝可梦属性克制计算器 ✨</h1>
+      <div class="sub">双属性抗性 · 太晶化战术参考 · 高对比克制矩阵</div>
     </div>
 
     <!-- 属性选择器 -->
     <div class="selector-card">
-        <div class="selector-title">防御方属性组合</div>
-        <div class="dual-select">
-            <div class="select-group">
-                <label>第一属性 🛡️</label>
-                <select id="typeA"></select>
-            </div>
-            <div class="select-group">
-                <label>第二属性 (可选) 🧬</label>
-                <select id="typeB">
-                    <option value="none">无 (单属性)</option>
-                </select>
-            </div>
+      <div class="selector-title">防御方属性组合</div>
+      <div class="dual-select">
+        <div class="select-group">
+          <label>第一属性 🛡️</label>
+          <select id="typeA"></select>
         </div>
-        <div class="badge-combo" id="comboDisplay">
-            <span>当前组合：</span>
-            <span class="combo-type" id="comboText">一般</span>
-            <span class="combo-note">▼ 双属性承受倍率 (防御方组合)</span>
+        <div class="select-group">
+          <label>第二属性 (可选) 🧬</label>
+          <select id="typeB">
+            <option value="none">无 (单属性)</option>
+          </select>
         </div>
+      </div>
+      <div class="badge-combo" id="comboDisplay">
+        <span>当前组合：</span>
+        <span class="combo-type" id="comboText">一般</span>
+        <span class="combo-note">▼ 双属性承受倍率 (防御方组合)</span>
+      </div>
     </div>
 
     <!-- 双属性承受倍率结果 -->
     <div class="result-section">
-        <div class="result-header">
-            <span>⚡ 双属性承受伤害倍率 (攻击方 → 防御组合)</span>
-            <div class="sort-buttons">
-                <button class="sort-btn" data-sort="fixed">📋 固定顺序</button>
-                <button class="sort-btn" data-sort="multiplier">📊 按倍率排序</button>
-            </div>
+      <div class="result-header">
+        <span>⚡ 双属性承受伤害倍率 (攻击方 → 防御组合)</span>
+        <div class="sort-buttons">
+          <button class="sort-btn" data-sort="fixed">📋 固定顺序</button>
+          <button class="sort-btn" data-sort="multiplier">📊 按倍率排序</button>
         </div>
-        <div id="resistanceList" class="grid-list"></div>
+      </div>
+      <div id="resistanceList" class="grid-list"></div>
     </div>
 
     <!-- 太晶化独立参考区域 -->
     <div class="terastal-section" id="terastalSection">
-        <div class="terastal-header">
-            <h3>✨ 太晶化战术参考</h3>
-            <span class="terastal-badge">第九世代机制</span>
-            <span class="tera-note">太晶化后属性替换为太晶属性，独立于原始双属性</span>
+      <div class="terastal-header">
+        <h3>✨ 太晶化战术参考</h3>
+        <span class="terastal-badge">第九世代机制</span>
+        <span class="tera-note">太晶化后属性替换为太晶属性，独立于原始双属性</span>
+      </div>
+      <div class="tera-select-group">
+        <label class="tera-result-title">🔮 选择太晶属性 (参考用)</label>
+        <select id="teraType">
+          <option value="none">无 (未太晶化)</option>
+        </select>
+      </div>
+      <div id="teraResultArea">
+        <div class="tera-result-title">💎 太晶化后承受倍率 (仅参考太晶属性)</div>
+        <div id="teraResistanceList" class="grid-list" style="padding: 0.8rem; background: transparent;">
+          <!-- 太晶化倍率展示区 -->
         </div>
-        <div class="tera-select-group">
-            <label class="tera-result-title">🔮 选择太晶属性 (参考用)</label>
-            <select id="teraType">
-                <option value="none">无 (未太晶化)</option>
-            </select>
+        <div class="tera-note" style="margin-top: 10px; display: inline-block;">
+          💡 说明：太晶化后宝可梦属性变为太晶属性，原始属性不再影响防御端。此表独立展示太晶化后的承受倍率，方便对比战术价值。
         </div>
-        <div id="teraResultArea">
-            <div class="tera-result-title">💎 太晶化后承受倍率 (仅参考太晶属性)</div>
-            <div id="teraResistanceList" class="grid-list" style="padding: 0.8rem; background: transparent;">
-                <!-- 太晶化倍率展示区 -->
-            </div>
-            <div class="tera-note" style="margin-top: 10px; display: inline-block;">
-                💡 说明：太晶化后宝可梦属性变为太晶属性，原始属性不再影响防御端。此表独立展示太晶化后的承受倍率，方便对比战术价值。
-            </div>
-        </div>
+      </div>
     </div>
 
     <!-- 完整克制关系矩阵 -->
     <div class="matrix-section">
-        <div class="matrix-title">
-            📊 完整克制关系表 (攻击方 × 防御方)
-            <span style="font-size:0.65rem;">🔴 2倍 &nbsp; 🟢 0.5倍 &nbsp; ⚫ 0倍</span>
-        </div>
-        <div style="overflow-x: auto;">
-            <table class="matrix-table" id="fullMatrix">
-                <thead id="matrixHead"></thead>
-                <tbody id="matrixBody"></tbody>
-            </table>
-        </div>
-        <div class="footnote">
-            * 基于第八代/第九代标准克制表 · 双属性抵抗倍率 = 两属性倍率相乘 (免疫0倍则总为0)<br>
-            🎨 太晶化后防御属性替换为太晶属性，提供独立的倍率参考
-        </div>
+      <div class="matrix-title">
+        📊 完整克制关系表 (攻击方 × 防御方)
+        <span style="font-size:0.65rem;">🔴 2倍 &nbsp; 🟢 0.5倍 &nbsp; ⚫ 0倍</span>
+      </div>
+      <div style="overflow-x: auto;">
+        <table class="matrix-table" id="fullMatrix">
+          <thead id="matrixHead"></thead>
+          <tbody id="matrixBody"></tbody>
+        </table>
+      </div>
+      <div class="footnote">
+        * 基于第八代/第九代标准克制表 · 双属性抵抗倍率 = 两属性倍率相乘 (免疫0倍则总为0)<br>
+        🎨 太晶化后防御属性替换为太晶属性，提供独立的倍率参考
+      </div>
     </div>
-</div>
+  </div>
 
-<script>
+  <script>
     // ---------- 1. 全18属性 ----------
     const TYPES = [
-        "一般", "格斗", "飞行", "毒", "地面", "岩石", "虫", "幽灵", "钢",
-        "火", "水", "草", "电", "超能力", "冰", "龙", "恶", "妖精"
+      "一般", "格斗", "飞行", "毒", "地面", "岩石", "虫", "幽灵", "钢",
+      "火", "水", "草", "电", "超能力", "冰", "龙", "恶", "妖精"
     ];
 
     const typeIndex = {};
@@ -512,101 +575,117 @@
 
     // 属性主题色
     const typeThemeColors = {
-        "一般": "#bbbbaa", "格斗": "#bb5544", "飞行": "#6699ff", "毒": "#aa5599",
-        "地面": "#ddbb55", "岩石": "#bbaa66", "虫": "#aabb22", "幽灵": "#6666bb",
-        "钢": "#aaaabb", "火": "#ff4422", "水": "#3399ff", "草": "#77cc55",
-        "电": "#ffcc33", "超能力": "#ff5599", "冰": "#77ddff", "龙": "#7766ee",
-        "恶": "#775544", "妖精": "#ffaaff"
+      "一般": "#bbbbaa", "格斗": "#bb5544", "飞行": "#6699ff", "毒": "#aa5599",
+      "地面": "#ddbb55", "岩石": "#bbaa66", "虫": "#aabb22", "幽灵": "#6666bb",
+      "钢": "#aaaabb", "火": "#ff4422", "水": "#3399ff", "草": "#77cc55",
+      "电": "#ffcc33", "超能力": "#ff5599", "冰": "#77ddff", "龙": "#7766ee",
+      "恶": "#775544", "妖精": "#ffaaff"
     };
 
     function getContrastColor(hex) {
-        if (hex.startsWith('#')) {
-            let r = parseInt(hex.slice(1,3), 16);
-            let g = parseInt(hex.slice(3,5), 16);
-            let b = parseInt(hex.slice(5,7), 16);
-            const luminance = (0.299 * r + 0.587 * g + 0.114 * b);
-            return luminance > 140 ? "#1e2a3a" : "#ffffff";
-        }
-        return "#1e2a3a";
+      if (hex.startsWith('#')) {
+        let r = parseInt(hex.slice(1, 3), 16);
+        let g = parseInt(hex.slice(3, 5), 16);
+        let b = parseInt(hex.slice(5, 7), 16);
+        const luminance = (0.299 * r + 0.587 * g + 0.114 * b);
+        return luminance > 140 ? "#1e2a3a" : "#ffffff";
+      }
+      return "#1e2a3a";
     }
 
     // ---------- 克制矩阵 ----------
     const effectiveness = Array(18).fill().map(() => Array(18).fill(1));
 
     function setEffect(attacker, defender, value) {
-        const aIdx = typeIndex[attacker];
-        const dIdx = typeIndex[defender];
-        if (aIdx !== undefined && dIdx !== undefined) effectiveness[aIdx][dIdx] = value;
+      const aIdx = typeIndex[attacker];
+      const dIdx = typeIndex[defender];
+      if (aIdx !== undefined && dIdx !== undefined) effectiveness[aIdx][dIdx] = value;
     }
 
+    // 第六世代起
     const relations = [
-        { att: "一般", def: "岩石", val: 0.5 }, { att: "一般", def: "幽灵", val: 0 }, { att: "一般", def: "钢", val: 0.5 },
-        { att: "格斗", def: "一般", val: 2 }, { att: "格斗", def: "岩石", val: 2 }, { att: "格斗", def: "冰", val: 2 },
-        { att: "格斗", def: "钢", val: 2 }, { att: "格斗", def: "恶", val: 2 }, { att: "格斗", def: "毒", val: 0.5 },
-        { att: "格斗", def: "飞行", val: 0.5 }, { att: "格斗", def: "超能力", val: 0.5 }, { att: "格斗", def: "虫", val: 0.5 },
-        { att: "格斗", def: "妖精", val: 0.5 }, { att: "格斗", def: "幽灵", val: 0 },
-        { att: "飞行", def: "格斗", val: 2 }, { att: "飞行", def: "虫", val: 2 }, { att: "飞行", def: "草", val: 2 },
-        { att: "飞行", def: "电", val: 0.5 }, { att: "飞行", def: "岩石", val: 0.5 }, { att: "飞行", def: "钢", val: 0.5 },
-        { att: "毒", def: "草", val: 2 }, { att: "毒", def: "妖精", val: 2 }, { att: "毒", def: "毒", val: 0.5 },
-        { att: "毒", def: "地面", val: 0.5 }, { att: "毒", def: "岩石", val: 0.5 }, { att: "毒", def: "幽灵", val: 0.5 }, { att: "毒", def: "钢", val: 0 },
-        { att: "地面", def: "毒", val: 2 }, { att: "地面", def: "岩石", val: 2 }, { att: "地面", def: "钢", val: 2 },
-        { att: "地面", def: "火", val: 2 }, { att: "地面", def: "电", val: 2 }, { att: "地面", def: "虫", val: 0.5 },
-        { att: "地面", def: "草", val: 0.5 }, { att: "地面", def: "飞行", val: 0 },
-        { att: "岩石", def: "飞行", val: 2 }, { att: "岩石", def: "虫", val: 2 }, { att: "岩石", def: "火", val: 2 },
-        { att: "岩石", def: "冰", val: 2 }, { att: "岩石", def: "格斗", val: 0.5 }, { att: "岩石", def: "地面", val: 0.5 }, { att: "岩石", def: "钢", val: 0.5 },
-        { att: "虫", def: "草", val: 2 }, { att: "虫", def: "超能力", val: 2 }, { att: "虫", def: "恶", val: 2 },
-        { att: "虫", def: "格斗", val: 0.5 }, { att: "虫", def: "飞行", val: 0.5 }, { att: "虫", def: "毒", val: 0.5 },
-        { att: "虫", def: "幽灵", val: 0.5 }, { att: "虫", def: "钢", val: 0.5 }, { att: "虫", def: "火", val: 0.5 }, { att: "虫", def: "妖精", val: 0.5 },
-        { att: "幽灵", def: "幽灵", val: 2 }, { att: "幽灵", def: "超能力", val: 2 }, { att: "幽灵", def: "一般", val: 0 }, { att: "幽灵", def: "恶", val: 0.5 },
-        { att: "钢", def: "岩石", val: 2 }, { att: "钢", def: "冰", val: 2 }, { att: "钢", def: "妖精", val: 2 },
-        { att: "钢", def: "钢", val: 0.5 }, { att: "钢", def: "火", val: 0.5 }, { att: "钢", def: "水", val: 0.5 }, { att: "钢", def: "电", val: 0.5 },
-        { att: "火", def: "虫", val: 2 }, { att: "火", def: "钢", val: 2 }, { att: "火", def: "草", val: 2 },
-        { att: "火", def: "冰", val: 2 }, { att: "火", def: "火", val: 0.5 }, { att: "火", def: "水", val: 0.5 }, { att: "火", def: "岩石", val: 0.5 }, { att: "火", def: "龙", val: 0.5 },
-        { att: "水", def: "火", val: 2 }, { att: "水", def: "地面", val: 2 }, { att: "水", def: "岩石", val: 2 },
-        { att: "水", def: "水", val: 0.5 }, { att: "水", def: "草", val: 0.5 }, { att: "水", def: "龙", val: 0.5 },
-        { att: "草", def: "水", val: 2 }, { att: "草", def: "地面", val: 2 }, { att: "草", def: "岩石", val: 2 },
-        { att: "草", def: "火", val: 0.5 }, { att: "草", def: "草", val: 0.5 }, { att: "草", def: "毒", val: 0.5 },
-        { att: "草", def: "飞行", val: 0.5 }, { att: "草", def: "虫", val: 0.5 }, { att: "草", def: "钢", val: 0.5 }, { att: "草", def: "龙", val: 0.5 },
-        { att: "电", def: "飞行", val: 2 }, { att: "电", def: "水", val: 2 }, { att: "电", def: "电", val: 0.5 },
-        { att: "电", def: "草", val: 0.5 }, { att: "电", def: "地面", val: 0 }, { att: "电", def: "龙", val: 0.5 },
-        { att: "超能力", def: "格斗", val: 2 }, { att: "超能力", def: "毒", val: 2 }, { att: "超能力", def: "超能力", val: 0.5 },
-        { att: "超能力", def: "钢", val: 0.5 }, { att: "超能力", def: "恶", val: 0 },
-        { att: "冰", def: "飞行", val: 2 }, { att: "冰", def: "地面", val: 2 }, { att: "冰", def: "草", val: 2 },
-        { att: "冰", def: "龙", val: 2 }, { att: "冰", def: "火", val: 0.5 }, { att: "冰", def: "水", val: 0.5 }, { att: "冰", def: "冰", val: 0.5 }, { att: "冰", def: "钢", val: 0.5 },
-        { att: "龙", def: "龙", val: 2 }, { att: "龙", def: "钢", val: 0.5 }, { att: "龙", def: "妖精", val: 0 },
-        { att: "恶", def: "超能力", val: 2 }, { att: "恶", def: "幽灵", val: 2 }, { att: "恶", def: "格斗", val: 0.5 },
-        { att: "恶", def: "恶", val: 0.5 }, { att: "恶", def: "妖精", val: 0.5 },
-        { att: "妖精", def: "格斗", val: 2 }, { att: "妖精", def: "龙", val: 2 }, { att: "妖精", def: "恶", val: 2 },
-        { att: "妖精", def: "毒", val: 0.5 }, { att: "妖精", def: "钢", val: 0.5 }, { att: "妖精", def: "火", val: 0.5 }
+      { att: "一般", def: "岩石", val: 0.5 }, { att: "一般", def: "幽灵", val: 0 }, { att: "一般", def: "钢", val: 0.5 },
+      // 格斗
+      { att: "格斗", def: "一般", val: 2 }, { att: "格斗", def: "飞行", val: 0.5 }, { att: "格斗", def: "毒", val: 0.5 }, { att: "格斗", def: "岩石", val: 2 },
+      { att: "格斗", def: "虫", val: 0.5 }, { att: "格斗", def: "幽灵", val: 0 }, { att: "格斗", def: "钢", val: 2 }, { att: "格斗", def: "超能力", val: 0.5 },
+      { att: "格斗", def: "冰", val: 2 }, { att: "格斗", def: "恶", val: 2 }, { att: "格斗", def: "妖精", val: 0.5 },
+      // 飞行
+      { att: "飞行", def: "格斗", val: 2 }, { att: "飞行", def: "岩石", val: 0.5 }, { att: "飞行", def: "虫", val: 2 }, { att: "飞行", def: "钢", val: 0.5 },
+      { att: "飞行", def: "草", val: 2 }, { att: "飞行", def: "电", val: 0.5 },
+      // 毒
+      { att: "毒", def: "毒", val: 0.5 }, { att: "毒", def: "地面", val: 0.5 }, { att: "毒", def: "岩石", val: 0.5 }, { att: "毒", def: "幽灵", val: 0.5 },
+      { att: "毒", def: "钢", val: 0 }, { att: "毒", def: "草", val: 2 }, { att: "毒", def: "妖精", val: 2 },
+      // 地面
+      { att: "地面", def: "飞行", val: 0 }, { att: "地面", def: "毒", val: 2 }, { att: "地面", def: "岩石", val: 2 }, { att: "地面", def: "虫", val: 0.5 },
+      { att: "地面", def: "钢", val: 2 }, { att: "地面", def: "火", val: 2 }, { att: "地面", def: "草", val: 0.5 }, { att: "地面", def: "电", val: 2 },
+      // 岩石
+      { att: "岩石", def: "格斗", val: 0.5 }, { att: "岩石", def: "飞行", val: 2 }, { att: "岩石", def: "地面", val: 0.5 }, { att: "岩石", def: "虫", val: 2 },
+      { att: "岩石", def: "钢", val: 0.5 }, { att: "岩石", def: "火", val: 2 }, { att: "岩石", def: "冰", val: 2 },
+      // 虫
+      { att: "虫", def: "格斗", val: 0.5 }, { att: "虫", def: "飞行", val: 0.5 }, { att: "虫", def: "毒", val: 0.5 }, { att: "虫", def: "幽灵", val: 0.5 },
+      { att: "虫", def: "钢", val: 0.5 }, { att: "虫", def: "火", val: 0.5 }, { att: "虫", def: "草", val: 2 }, { att: "虫", def: "超能力", val: 2 },
+      { att: "虫", def: "恶", val: 2 }, { att: "虫", def: "妖精", val: 0.5 },
+      // 幽灵
+      { att: "幽灵", def: "一般", val: 0 }, { att: "幽灵", def: "幽灵", val: 2 }, { att: "幽灵", def: "超能力", val: 2 }, { att: "幽灵", def: "恶", val: 0.5 },
+      // 钢
+      { att: "钢", def: "岩石", val: 2 }, { att: "钢", def: "钢", val: 0.5 }, { att: "钢", def: "火", val: 0.5 }, { att: "钢", def: "水", val: 0.5 },
+      { att: "钢", def: "电", val: 0.5 }, { att: "钢", def: "冰", val: 2 }, { att: "钢", def: "妖精", val: 2 },
+      // 火
+      { att: "火", def: "岩石", val: 0.5 }, { att: "火", def: "虫", val: 2 }, { att: "火", def: "钢", val: 2 }, { att: "火", def: "火", val: 0.5 },
+      { att: "火", def: "水", val: 0.5 }, { att: "火", def: "草", val: 2 }, { att: "火", def: "冰", val: 2 }, { att: "火", def: "龙", val: 0.5 },
+      // 水
+      { att: "水", def: "地面", val: 2 }, { att: "水", def: "岩石", val: 2 }, { att: "水", def: "火", val: 2 }, { att: "水", def: "水", val: 0.5 },
+      { att: "水", def: "草", val: 0.5 }, { att: "水", def: "龙", val: 0.5 },
+      // 草
+      { att: "草", def: "飞行", val: 0.5 }, { att: "草", def: "毒", val: 0.5 }, { att: "草", def: "地面", val: 2 }, { att: "草", def: "岩石", val: 2 },
+      { att: "草", def: "虫", val: 0.5 }, { att: "草", def: "钢", val: 0.5 }, { att: "草", def: "火", val: 0.5 }, { att: "草", def: "水", val: 2 },
+      { att: "草", def: "草", val: 0.5 }, { att: "草", def: "龙", val: 0.5 },
+      // 电
+      { att: "电", def: "飞行", val: 2 }, { att: "电", def: "地面", val: 0 }, { att: "电", def: "水", val: 2 }, { att: "电", def: "草", val: 0.5 },
+      { att: "电", def: "电", val: 0.5 }, { att: "电", def: "龙", val: 0.5 },
+      // 超能力
+      { att: "超能力", def: "格斗", val: 2 }, { att: "超能力", def: "毒", val: 2 }, { att: "超能力", def: "钢", val: 0.5 }, { att: "超能力", def: "超能力", val: 0.5 },
+      { att: "超能力", def: "恶", val: 0 },
+      // 冰
+      { att: "冰", def: "飞行", val: 2 }, { att: "冰", def: "地面", val: 2 }, { att: "冰", def: "钢", val: 0.5 }, { att: "冰", def: "火", val: 0.5 },
+      { att: "冰", def: "水", val: 0.5 }, { att: "冰", def: "草", val: 2 }, { att: "冰", def: "冰", val: 0.5 }, { att: "冰", def: "龙", val: 2 },
+      // 龙
+      { att: "龙", def: "钢", val: 0.5 }, { att: "龙", def: "龙", val: 2 }, { att: "龙", def: "妖精", val: 0 },
+      // 恶
+      { att: "恶", def: "格斗", val: 0.5 }, { att: "恶", def: "幽灵", val: 2 }, { att: "恶", def: "超能力", val: 2 }, { att: "恶", def: "恶", val: 0.5 },
+      { att: "恶", def: "妖精", val: 0.5 },
+      // 妖精
+      { att: "妖精", def: "格斗", val: 2 }, { att: "妖精", def: "毒", val: 0.5 }, { att: "妖精", def: "钢", val: 0.5 }, { att: "妖精", def: "火", val: 0.5 },
+      { att: "妖精", def: "龙", val: 2 }, { att: "妖精", def: "恶", val: 2 },
     ];
     for (const r of relations) setEffect(r.att, r.def, r.val);
 
     // 辅助函数
     function getSingleEffectiveness(attackerIdx, defenderIdx) {
-        return effectiveness[attackerIdx][defenderIdx];
+      return effectiveness[attackerIdx][defenderIdx];
     }
     function getCombinedEffectiveness(attackerIdx, def1Idx, def2Idx) {
-        if (def2Idx === null || def2Idx === undefined) return getSingleEffectiveness(attackerIdx, def1Idx);
-        const rate1 = getSingleEffectiveness(attackerIdx, def1Idx);
-        const rate2 = getSingleEffectiveness(attackerIdx, def2Idx);
-        if (rate1 === 0 || rate2 === 0) return 0;
-        return rate1 * rate2;
+      if (def2Idx === null || def2Idx === undefined) return getSingleEffectiveness(attackerIdx, def1Idx);
+      const rate1 = getSingleEffectiveness(attackerIdx, def1Idx);
+      const rate2 = getSingleEffectiveness(attackerIdx, def2Idx);
+      if (rate1 === 0 || rate2 === 0) return 0;
+      return rate1 * rate2;
     }
     function formatMultiplier(val) {
-        if (val === 0) return "0";
-        if (val === 1) return "1";
-        if (val === 2) return "2";
-        if (val === 0.5) return "½";
-        if (val === 4) return "4";
-        if (val === 0.25) return "¼";
-        if (val === 0.125) return "⅛";
-        return val.toFixed(2);
+      if (val === 0) return "0";
+      if (val === 1) return "1";
+      if (val === 2) return "2";
+      if (val === 0.5) return "½";
+      if (val === 4) return "4";
+      if (val === 0.25) return "¼";
+      if (val === 0.125) return "⅛";
+      return val.toFixed(2);
     }
     function getClassByMultiplier(val) {
-        if (val === 0) return "immune";
-        if (val > 1) return "weak";
-        if (val < 1) return "resist";
-        return "normal";
+      if (val === 0) return "immune";
+      if (val > 1) return "weak";
+      if (val < 1) return "resist";
+      return "normal";
     }
 
     let currentOrder = "fixed";
@@ -615,177 +694,178 @@
 
     // 渲染双属性抵抗列表
     function renderResistanceList(def1Idx, def2Idx, order = currentOrder) {
-        const container = document.getElementById("resistanceList");
-        if (!container) return;
-        const rawResults = [];
-        for (let i = 0; i < TYPES.length; i++) {
-            const mult = getCombinedEffectiveness(i, def1Idx, def2Idx);
-            rawResults.push({ name: TYPES[i], multiplier: mult, idx: i });
-        }
-        let sortedResults = [...rawResults];
-        if (order === "fixed") sortedResults.sort((a, b) => a.idx - b.idx);
-        else if (order === "multiplier") sortedResults.sort((a, b) => a.multiplier - b.multiplier);
-        
-        container.innerHTML = "";
-        for (const r of sortedResults) {
-            const themeColor = typeThemeColors[r.name] || "#A0A0A0";
-            const textColor = getContrastColor(themeColor);
-            const multiplierClass = getClassByMultiplier(r.multiplier);
-            const card = document.createElement("div");
-            card.className = `type-card ${multiplierClass}`;
-            card.style.background = themeColor;
-            card.style.color = textColor;
-            const multDisplay = formatMultiplier(r.multiplier);
-            card.innerHTML = `<span class="type-name" style="color:${textColor};">${r.name}</span><span class="multiplier">${multDisplay}×</span>`;
-            container.appendChild(card);
-        }
+      const container = document.getElementById("resistanceList");
+      if (!container) return;
+      const rawResults = [];
+      for (let i = 0; i < TYPES.length; i++) {
+        const mult = getCombinedEffectiveness(i, def1Idx, def2Idx);
+        rawResults.push({ name: TYPES[i], multiplier: mult, idx: i });
+      }
+      let sortedResults = [...rawResults];
+      if (order === "fixed") sortedResults.sort((a, b) => a.idx - b.idx);
+      else if (order === "multiplier") sortedResults.sort((a, b) => a.multiplier - b.multiplier);
+
+      container.innerHTML = "";
+      for (const r of sortedResults) {
+        const themeColor = typeThemeColors[r.name] || "#A0A0A0";
+        const textColor = getContrastColor(themeColor);
+        const multiplierClass = getClassByMultiplier(r.multiplier);
+        const card = document.createElement("div");
+        card.className = `type-card ${multiplierClass}`;
+        card.style.background = themeColor;
+        card.style.color = textColor;
+        const multDisplay = formatMultiplier(r.multiplier);
+        card.innerHTML = `<span class="type-name" style="color:${textColor};">${r.name}</span><span class="multiplier">${multDisplay}×</span>`;
+        container.appendChild(card);
+      }
     }
 
     // 渲染太晶化承受倍率
     function renderTeraResistance(teraTypeIdx) {
-        const container = document.getElementById("teraResistanceList");
-        if (!container) return;
-        
-        if (teraTypeIdx === null) {
-            container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:20px; color:#6b21a5; background:#fdfcff; border-radius:40px;">✨ 请选择一个太晶属性，查看太晶化后的承受倍率</div>`;
-            return;
-        }
-        
-        const results = [];
-        for (let i = 0; i < TYPES.length; i++) {
-            const mult = getSingleEffectiveness(i, teraTypeIdx);
-            results.push({ name: TYPES[i], multiplier: mult, idx: i });
-        }
-        results.sort((a, b) => a.idx - b.idx);
-        
-        container.innerHTML = "";
-        for (const r of results) {
-            const themeColor = typeThemeColors[r.name] || "#A0A0A0";
-            const textColor = getContrastColor(themeColor);
-            const multiplierClass = getClassByMultiplier(r.multiplier);
-            const card = document.createElement("div");
-            card.className = `type-card ${multiplierClass}`;
-            card.style.background = themeColor;
-            card.style.color = textColor;
-            const multDisplay = formatMultiplier(r.multiplier);
-            card.innerHTML = `<span class="type-name" style="color:${textColor};">${r.name}</span><span class="multiplier">${multDisplay}×</span>`;
-            container.appendChild(card);
-        }
+      const container = document.getElementById("teraResistanceList");
+      if (!container) return;
+
+      if (teraTypeIdx === null) {
+        container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:20px; color:#6b21a5; background:#fdfcff; border-radius:40px;">✨ 请选择一个太晶属性，查看太晶化后的承受倍率</div>`;
+        return;
+      }
+
+      const results = [];
+      for (let i = 0; i < TYPES.length; i++) {
+        const mult = getSingleEffectiveness(i, teraTypeIdx);
+        results.push({ name: TYPES[i], multiplier: mult, idx: i });
+      }
+      results.sort((a, b) => a.idx - b.idx);
+
+      container.innerHTML = "";
+      for (const r of results) {
+        const themeColor = typeThemeColors[r.name] || "#A0A0A0";
+        const textColor = getContrastColor(themeColor);
+        const multiplierClass = getClassByMultiplier(r.multiplier);
+        const card = document.createElement("div");
+        card.className = `type-card ${multiplierClass}`;
+        card.style.background = themeColor;
+        card.style.color = textColor;
+        const multDisplay = formatMultiplier(r.multiplier);
+        card.innerHTML = `<span class="type-name" style="color:${textColor};">${r.name}</span><span class="multiplier">${multDisplay}×</span>`;
+        container.appendChild(card);
+      }
     }
 
     function updateUI() {
-        const typeASelect = document.getElementById("typeA");
-        const typeBSelect = document.getElementById("typeB");
-        let def1Name = typeASelect.value;
-        let def2Name = typeBSelect.value === "none" ? null : typeBSelect.value;
-        if (def2Name !== null && def1Name === def2Name) {
-            typeBSelect.value = "none";
-            def2Name = null;
-        }
-        const def1Idx = typeIndex[def1Name];
-        const def2Idx = def2Name ? typeIndex[def2Name] : null;
-        currentDef1Idx = def1Idx;
-        currentDef2Idx = def2Idx;
-        const comboTextSpan = document.getElementById("comboText");
-        comboTextSpan.innerText = def2Name ? `${def1Name} + ${def2Name}` : `${def1Name}`;
-        renderResistanceList(def1Idx, def2Idx, currentOrder);
+      const typeASelect = document.getElementById("typeA");
+      const typeBSelect = document.getElementById("typeB");
+      let def1Name = typeASelect.value;
+      let def2Name = typeBSelect.value === "none" ? null : typeBSelect.value;
+      if (def2Name !== null && def1Name === def2Name) {
+        typeBSelect.value = "none";
+        def2Name = null;
+      }
+      const def1Idx = typeIndex[def1Name];
+      const def2Idx = def2Name ? typeIndex[def2Name] : null;
+      currentDef1Idx = def1Idx;
+      currentDef2Idx = def2Idx;
+      const comboTextSpan = document.getElementById("comboText");
+      comboTextSpan.innerText = def2Name ? `${def1Name} + ${def2Name}` : `${def1Name}`;
+      renderResistanceList(def1Idx, def2Idx, currentOrder);
     }
 
     function updateTeraUI() {
-        const teraSelect = document.getElementById("teraType");
-        const teraValue = teraSelect.value;
-        if (teraValue === "none") {
-            currentTeraIdx = null;
-        } else {
-            currentTeraIdx = typeIndex[teraValue];
-        }
-        renderTeraResistance(currentTeraIdx);
+      const teraSelect = document.getElementById("teraType");
+      const teraValue = teraSelect.value;
+      if (teraValue === "none") {
+        currentTeraIdx = null;
+      } else {
+        currentTeraIdx = typeIndex[teraValue];
+      }
+      renderTeraResistance(currentTeraIdx);
     }
 
     // 完整克制表渲染
     function renderFullMatrix() {
-        const thead = document.getElementById("matrixHead");
-        const tbody = document.getElementById("matrixBody");
-        let headHtml = "<tr><th style='width: 6em;'>攻击方 ↓ / 防御方 →</th>";
-        for (let defType of TYPES) {
-            const bgColor = typeThemeColors[defType] || "#aaaaaa";
-            const textColor = getContrastColor(bgColor);
-            headHtml += `<th style="background-color: ${bgColor}; color: ${textColor};">${defType}</th>`;
+      const thead = document.getElementById("matrixHead");
+      const tbody = document.getElementById("matrixBody");
+      let headHtml = "<tr><th style='width: 6em;'>攻击方 ↓ / 防御方 →</th>";
+      for (let defType of TYPES) {
+        const bgColor = typeThemeColors[defType] || "#aaaaaa";
+        const textColor = getContrastColor(bgColor);
+        headHtml += `<th style="background-color: ${bgColor}; color: ${textColor};">${defType}</th>`;
+      }
+      headHtml += "</table>";
+      thead.innerHTML = headHtml;
+      let bodyHtml = "";
+      for (let attIdx = 0; attIdx < TYPES.length; attIdx++) {
+        const attName = TYPES[attIdx];
+        const bgColor = typeThemeColors[attName] || "#aaaaaa";
+        const textColor = getContrastColor(bgColor);
+        bodyHtml += `<tr><td style="background-color: ${bgColor}; color: ${textColor}; font-weight: 700;">${attName}</td>`;
+        for (let defIdx = 0; defIdx < TYPES.length; defIdx++) {
+          const val = effectiveness[attIdx][defIdx];
+          let cellClass = "", display = "";
+          if (val === 2) { cellClass = "cell-2"; display = "2"; }
+          else if (val === 1) { cellClass = "cell-1"; display = "1"; }
+          else if (val === 0.5) { cellClass = "cell-05"; display = "½"; }
+          else if (val === 0) { cellClass = "cell-0"; display = "0"; }
+          else { display = val; cellClass = "cell-1"; }
+          bodyHtml += `<td class="${cellClass}"><strong>${display}</strong></td>`;
         }
-        headHtml += "</table>";
-        thead.innerHTML = headHtml;
-        let bodyHtml = "";
-        for (let attIdx = 0; attIdx < TYPES.length; attIdx++) {
-            const attName = TYPES[attIdx];
-            const bgColor = typeThemeColors[attName] || "#aaaaaa";
-            const textColor = getContrastColor(bgColor);
-            bodyHtml += `<tr><td style="background-color: ${bgColor}; color: ${textColor}; font-weight: 700;">${attName}</td>`;
-            for (let defIdx = 0; defIdx < TYPES.length; defIdx++) {
-                const val = effectiveness[attIdx][defIdx];
-                let cellClass = "", display = "";
-                if (val === 2) { cellClass = "cell-2"; display = "2"; }
-                else if (val === 1) { cellClass = "cell-1"; display = "1"; }
-                else if (val === 0.5) { cellClass = "cell-05"; display = "½"; }
-                else if (val === 0) { cellClass = "cell-0"; display = "0"; }
-                else { display = val; cellClass = "cell-1"; }
-                bodyHtml += `<td class="${cellClass}"><strong>${display}</strong></td>`;
-            }
-            bodyHtml += "</tr>";
-        }
-        tbody.innerHTML = bodyHtml;
+        bodyHtml += "</tr>";
+      }
+      tbody.innerHTML = bodyHtml;
     }
 
     function initSelectors() {
-        const typeASelect = document.getElementById("typeA");
-        const typeBSelect = document.getElementById("typeB");
-        const teraSelect = document.getElementById("teraType");
-        
-        for (let t of TYPES) {
-            const optA = document.createElement("option"); optA.value = t; optA.textContent = t;
-            typeASelect.appendChild(optA);
-            const optB = document.createElement("option"); optB.value = t; optB.textContent = t;
-            typeBSelect.appendChild(optB);
-            const optTera = document.createElement("option"); optTera.value = t; optTera.textContent = t;
-            teraSelect.appendChild(optTera);
-        }
-        typeASelect.value = "一般";
-        typeBSelect.value = "none";
-        teraSelect.value = "none";
-        
-        typeASelect.addEventListener("change", () => {
-            if (typeBSelect.value !== "none" && typeBSelect.value === typeASelect.value) typeBSelect.value = "none";
-            updateUI();
-        });
-        typeBSelect.addEventListener("change", () => {
-            if (typeBSelect.value !== "none" && typeBSelect.value === typeASelect.value) {
-                alert("双属性不能相同，已自动清除第二属性");
-                typeBSelect.value = "none";
-            }
-            updateUI();
-        });
-        teraSelect.addEventListener("change", () => updateTeraUI());
-        
+      const typeASelect = document.getElementById("typeA");
+      const typeBSelect = document.getElementById("typeB");
+      const teraSelect = document.getElementById("teraType");
+
+      for (let t of TYPES) {
+        const optA = document.createElement("option"); optA.value = t; optA.textContent = t;
+        typeASelect.appendChild(optA);
+        const optB = document.createElement("option"); optB.value = t; optB.textContent = t;
+        typeBSelect.appendChild(optB);
+        const optTera = document.createElement("option"); optTera.value = t; optTera.textContent = t;
+        teraSelect.appendChild(optTera);
+      }
+      typeASelect.value = "一般";
+      typeBSelect.value = "none";
+      teraSelect.value = "none";
+
+      typeASelect.addEventListener("change", () => {
+        if (typeBSelect.value !== "none" && typeBSelect.value === typeASelect.value) typeBSelect.value = "none";
         updateUI();
-        updateTeraUI();
+      });
+      typeBSelect.addEventListener("change", () => {
+        if (typeBSelect.value !== "none" && typeBSelect.value === typeASelect.value) {
+          alert("双属性不能相同，已自动清除第二属性");
+          typeBSelect.value = "none";
+        }
+        updateUI();
+      });
+      teraSelect.addEventListener("change", () => updateTeraUI());
+
+      updateUI();
+      updateTeraUI();
     }
 
     function bindSortEvents() {
-        document.querySelector("[data-sort='fixed']").addEventListener("click", () => {
-            currentOrder = "fixed";
-            renderResistanceList(currentDef1Idx, currentDef2Idx, currentOrder);
-        });
-        document.querySelector("[data-sort='multiplier']").addEventListener("click", () => {
-            currentOrder = "multiplier";
-            renderResistanceList(currentDef1Idx, currentDef2Idx, currentOrder);
-        });
+      document.querySelector("[data-sort='fixed']").addEventListener("click", () => {
+        currentOrder = "fixed";
+        renderResistanceList(currentDef1Idx, currentDef2Idx, currentOrder);
+      });
+      document.querySelector("[data-sort='multiplier']").addEventListener("click", () => {
+        currentOrder = "multiplier";
+        renderResistanceList(currentDef1Idx, currentDef2Idx, currentOrder);
+      });
     }
 
     function init() {
-        renderFullMatrix();
-        initSelectors();
-        bindSortEvents();
+      renderFullMatrix();
+      initSelectors();
+      bindSortEvents();
     }
     init();
-</script>
+  </script>
 </body>
+
 </html>
