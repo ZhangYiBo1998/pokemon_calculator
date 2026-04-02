@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <title>宝可梦属性克制计算器 | 太晶化战术 + 双向克制预警</title>
+  <title>宝可梦属性克制计算器 | 太晶化战术 + 双向克制预警 + 矩阵聚焦筛选</title>
   <style>
     * {
       box-sizing: border-box;
@@ -218,6 +218,11 @@
       font-weight: 500;
     }
 
+    .sort-btn.primary {
+      background: #3b82f6;
+      color: white;
+    }
+
     .grid-list {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -317,9 +322,36 @@
       font-size: 1rem;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
       color: #1f2a3e;
       flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .matrix-controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    .matrix-btn {
+      background: #e2e8f0;
+      border: none;
+      padding: 5px 12px;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.1s;
+      color: #1e293b;
+    }
+
+    .matrix-btn.primary {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .matrix-btn:hover {
+      opacity: 0.8;
     }
 
     .matrix-table {
@@ -435,6 +467,16 @@
       .terastal-section {
         padding: 0.9rem 1rem;
       }
+
+      .matrix-title {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+      }
+
+      .matrix-controls {
+        justify-content: flex-end;
+      }
     }
 
     @media (max-width: 375px) {
@@ -454,7 +496,7 @@
   <div class="container">
     <div class="header">
       <h1>✨ 宝可梦属性克制计算器 ✨</h1>
-      <div class="sub">双属性抗性 · 太晶化战术 · 双向克制预警 ⚠️</div>
+      <div class="sub">双属性抗性 · 太晶化战术 · 双向克制预警 · 矩阵聚焦筛选</div>
     </div>
 
     <!-- 属性选择器 -->
@@ -484,8 +526,8 @@
       <div class="result-header">
         <span>⚡ 原始属性承受伤害倍率 (攻击方 → 防御组合)</span>
         <div class="sort-buttons">
-          <button class="sort-btn" data-sort="fixed">📋 固定顺序</button>
-          <button class="sort-btn" data-sort="multiplier">📊 按倍率排序</button>
+          <button id="fixedSortBtn" class="sort-btn primary" data-sort="fixed">📋 固定顺序</button>
+          <button id="multiplierSortBtn" class="sort-btn" data-sort="multiplier">📊 按倍率排序</button>
         </div>
       </div>
       <div id="resistanceList" class="grid-list"></div>
@@ -520,11 +562,14 @@
       </div>
     </div>
 
-    <!-- 完整克制关系矩阵 -->
+    <!-- 完整克制关系矩阵 + 筛选功能 -->
     <div class="matrix-section">
       <div class="matrix-title">
-        📊 完整克制关系表 (攻击方 × 防御方)
-        <span style="font-size:0.65rem;">🔴 2倍 &nbsp; 🟢 0.5倍 &nbsp; ⚫ 0倍</span>
+        <span>📊 完整克制关系表 (攻击方 × 防御方)</span>
+        <div class="matrix-controls">
+          <button id="showAllBtn" class="matrix-btn primary">🔓 显示全部</button>
+          <button id="focusKeyBtn" class="matrix-btn">🎯 聚焦关键属性</button>
+        </div>
       </div>
       <div style="overflow-x: auto;">
         <table class="matrix-table" id="fullMatrix">
@@ -534,7 +579,8 @@
       </div>
       <div class="footnote">
         * 基于第八代/第九代标准克制表 · 双属性抵抗倍率 = 两属性倍率相乘 (免疫0倍则总为0)<br>
-        🎨 太晶化后防御属性替换为太晶属性，提供独立的倍率参考 + 反向克制提醒
+        🎨 太晶化后防御属性替换为太晶属性，提供独立的倍率参考 + 反向克制提醒<br>
+        🔍 点击「聚焦关键属性」仅显示当前原始属性（及太晶属性）作为攻击方的行，方便战术分析。
       </div>
     </div>
   </div>
@@ -634,14 +680,13 @@
       return "normal";
     }
 
-    // 获取反向克制属性列表 (防御方的哪些属性克制攻击方)
+    // 反向克制辅助
     function getReverseTypes(attIdx, defIdxs) {
-      // defIdxs: 属性索引数组 (去重, 可能包含原始双属性和太晶属性)
       const result = [];
       const seen = new Set();
       for (let defIdx of defIdxs) {
         if (defIdx === null || defIdx === undefined) continue;
-        const val = getSingleEffectiveness(defIdx, attIdx);  // 防御方属性作为攻击方时的倍率
+        const val = getSingleEffectiveness(defIdx, attIdx);
         if (val > 1) {
           const typeName = TYPES[defIdx];
           if (!seen.has(typeName)) {
@@ -653,12 +698,88 @@
       return result;
     }
 
+    // ---------- 全局状态 ----------
     let currentOrder = "fixed";
     let currentDef1Idx = 0, currentDef2Idx = null;
     let currentTeraIdx = null;
+    let focusMode = false;      // 矩阵聚焦模式
+    let focusedAttIndices = []; // 聚焦模式下显示的属性索引列表
 
-    // 渲染双属性抵抗列表 (原始组合) 
-    // 核心改动：无论是否太晶化，只要攻击方对原始组合倍率>1，且攻击方被原始属性或太晶属性克制，就显示反向提醒
+    // 计算当前关键属性索引（原始双属性+太晶，去重）
+    function computeKeyIndices() {
+      const indices = new Set();
+      if (currentDef1Idx !== undefined) indices.add(currentDef1Idx);
+      if (currentDef2Idx !== null && currentDef2Idx !== undefined) indices.add(currentDef2Idx);
+      if (currentTeraIdx !== null && currentTeraIdx !== undefined) indices.add(currentTeraIdx);
+      return Array.from(indices).sort((a, b) => a - b);
+    }
+
+    // 刷新矩阵渲染（基于 focusMode 和 focusedAttIndices）
+    function refreshMatrix() {
+      if (focusMode) {
+        drawMatrix(focusedAttIndices);
+      } else {
+        drawMatrix(null);
+      }
+    }
+
+    // 绘制矩阵 (attIndicesFilter 为 null 表示全部, 否则为索引数组)
+    function drawMatrix(attIndicesFilter) {
+      const thead = document.getElementById("matrixHead");
+      const tbody = document.getElementById("matrixBody");
+      // 表头（防御方列）始终完整展示
+      let headHtml = "<tr><th style='width: 6em;'>攻击方 ↓ / 防御方 →</th>";
+      for (let defType of TYPES) {
+        const bgColor = typeThemeColors[defType] || "#aaaaaa";
+        const textColor = getContrastColor(bgColor);
+        headHtml += `<th style="background-color: ${bgColor}; color: ${textColor};">${defType}</th>`;
+      }
+      headHtml += "</tr>";
+      thead.innerHTML = headHtml;
+
+      let bodyHtml = "";
+      // 确定要遍历的攻击方索引
+      let attIndices = (attIndicesFilter === null) ? TYPES.map((_, idx) => idx) : attIndicesFilter;
+      for (let attIdx of attIndices) {
+        const attName = TYPES[attIdx];
+        const bgColor = typeThemeColors[attName] || "#aaaaaa";
+        const textColor = getContrastColor(bgColor);
+        bodyHtml += `<tr><td style="background-color: ${bgColor}; color: ${textColor}; font-weight: 700;">${attName}</td>`;
+        for (let defIdx = 0; defIdx < TYPES.length; defIdx++) {
+          const val = effectiveness[attIdx][defIdx];
+          let cellClass = "", display = "";
+          if (val === 2) { cellClass = "cell-2"; display = "2"; }
+          else if (val === 1) { cellClass = "cell-1"; display = "1"; }
+          else if (val === 0.5) { cellClass = "cell-05"; display = "½"; }
+          else if (val === 0) { cellClass = "cell-0"; display = "0"; }
+          else { display = val; cellClass = "cell-1"; }
+          bodyHtml += `<td class="${cellClass}"><strong>${display}</strong></td>`;
+        }
+        bodyHtml += "</tr>";
+      }
+      tbody.innerHTML = bodyHtml;
+    }
+
+    // 聚焦关键属性
+    function enableFocusMode() {
+      focusMode = true;
+      focusedAttIndices = computeKeyIndices();
+      refreshMatrix();
+    }
+    function disableFocusMode() {
+      focusMode = false;
+      refreshMatrix();
+    }
+
+    // 当原始属性或太晶属性变化时，如果处于聚焦模式，则更新聚焦列表并刷新
+    function updateFocusIfNeeded() {
+      if (focusMode) {
+        focusedAttIndices = computeKeyIndices();
+        refreshMatrix();
+      }
+    }
+
+    // 以下为原有的倍率列表渲染函数（保持不变，但需要适配反向提醒）
     function renderResistanceList(def1Idx, def2Idx, order = currentOrder, teraIdx = currentTeraIdx) {
       const container = document.getElementById("resistanceList");
       if (!container) return;
@@ -671,12 +792,9 @@
       if (order === "fixed") sortedResults.sort((a, b) => a.idx - b.idx);
       else if (order === "multiplier") sortedResults.sort((a, b) => a.multiplier - b.multiplier);
       container.innerHTML = "";
-      // 原始防御属性列表 (用于反向克制，始终包含原始双属性)
       const reverseDefIdxs = [def1Idx];
       if (def2Idx !== null) reverseDefIdxs.push(def2Idx);
-      // 如果已选择太晶属性，也加入太晶属性用于反向判定
       if (teraIdx !== null) reverseDefIdxs.push(teraIdx);
-
       for (const r of sortedResults) {
         const themeColor = typeThemeColors[r.name] || "#A0A0A0";
         const textColor = getContrastColor(themeColor);
@@ -686,7 +804,6 @@
         card.style.background = themeColor;
         card.style.color = textColor;
         let reverseHtml = "";
-        // 只要攻击方对原始属性倍率>1 就检查是否被原始属性或太晶属性克制
         if (r.multiplier > 1) {
           const reverseTypes = getReverseTypes(r.idx, reverseDefIdxs);
           if (reverseTypes.length > 0) {
@@ -704,7 +821,6 @@
       }
     }
 
-    // 渲染太晶化承受倍率 (基于太晶属性 + 反向克制提醒：同时考虑原始属性+太晶属性)
     function renderTeraResistance(teraTypeIdx, def1Idx, def2Idx) {
       const container = document.getElementById("teraResistanceList");
       if (!container) return;
@@ -719,7 +835,6 @@
       }
       results.sort((a, b) => a.idx - b.idx);
       container.innerHTML = "";
-      // 原始防御属性 + 太晶属性 用于反向克制判定
       const reverseDefIdxs = [def1Idx];
       if (def2Idx !== null) reverseDefIdxs.push(def2Idx);
       reverseDefIdxs.push(teraTypeIdx);
@@ -764,14 +879,14 @@
       currentDef2Idx = def2Idx;
       const comboTextSpan = document.getElementById("comboText");
       comboTextSpan.innerText = def2Name ? `${def1Name} + ${def2Name}` : `${def1Name}`;
-      // 重新渲染原始列表 (传入当前太晶索引，反向判定会包含太晶)
       renderResistanceList(def1Idx, def2Idx, currentOrder, currentTeraIdx);
-      // 同时刷新太晶列表
       if (currentTeraIdx !== null) {
         renderTeraResistance(currentTeraIdx, def1Idx, def2Idx);
       } else {
         renderTeraResistance(null, def1Idx, def2Idx);
       }
+      // 矩阵聚焦模式更新
+      updateFocusIfNeeded();
     }
 
     function updateTeraUI() {
@@ -782,45 +897,12 @@
       } else {
         currentTeraIdx = typeIndex[teraValue];
       }
-      // 刷新原始列表 (因为太晶变化影响反向判定)
       renderResistanceList(currentDef1Idx, currentDef2Idx, currentOrder, currentTeraIdx);
-      // 刷新太晶列表
       renderTeraResistance(currentTeraIdx, currentDef1Idx, currentDef2Idx);
+      updateFocusIfNeeded();
     }
 
-    // 完整克制表渲染
-    function renderFullMatrix() {
-      const thead = document.getElementById("matrixHead");
-      const tbody = document.getElementById("matrixBody");
-      let headHtml = "<tr><th style='width: 6em;'>攻击方 ↓ / 防御方 →</th>";
-      for (let defType of TYPES) {
-        const bgColor = typeThemeColors[defType] || "#aaaaaa";
-        const textColor = getContrastColor(bgColor);
-        headHtml += `<th style="background-color: ${bgColor}; color: ${textColor};">${defType}</th>`;
-      }
-      headHtml += "</tr>";
-      thead.innerHTML = headHtml;
-      let bodyHtml = "";
-      for (let attIdx = 0; attIdx < TYPES.length; attIdx++) {
-        const attName = TYPES[attIdx];
-        const bgColor = typeThemeColors[attName] || "#aaaaaa";
-        const textColor = getContrastColor(bgColor);
-        bodyHtml += `<tr><td style="background-color: ${bgColor}; color: ${textColor}; font-weight: 700;">${attName}</td>`;
-        for (let defIdx = 0; defIdx < TYPES.length; defIdx++) {
-          const val = effectiveness[attIdx][defIdx];
-          let cellClass = "", display = "";
-          if (val === 2) { cellClass = "cell-2"; display = "2"; }
-          else if (val === 1) { cellClass = "cell-1"; display = "1"; }
-          else if (val === 0.5) { cellClass = "cell-05"; display = "½"; }
-          else if (val === 0) { cellClass = "cell-0"; display = "0"; }
-          else { display = val; cellClass = "cell-1"; }
-          bodyHtml += `<td class="${cellClass}"><strong>${display}</strong></td>`;
-        }
-        bodyHtml += "</tr>";
-      }
-      tbody.innerHTML = bodyHtml;
-    }
-
+    // 初始化选择器与事件
     function initSelectors() {
       const typeASelect = document.getElementById("typeA");
       const typeBSelect = document.getElementById("typeB");
@@ -853,20 +935,46 @@
     }
 
     function bindSortEvents() {
-      document.querySelector("[data-sort='fixed']").addEventListener("click", () => {
+      const fixedSortBtn = document.getElementById("fixedSortBtn");
+      const multiplierSortBtn = document.getElementById("multiplierSortBtn");
+      fixedSortBtn.addEventListener("click", () => {
         currentOrder = "fixed";
+        fixedSortBtn.classList.remove("primary")
+        multiplierSortBtn.classList.remove("primary")
+        fixedSortBtn.classList.add("primary")
         renderResistanceList(currentDef1Idx, currentDef2Idx, currentOrder, currentTeraIdx);
       });
-      document.querySelector("[data-sort='multiplier']").addEventListener("click", () => {
+      multiplierSortBtn.addEventListener("click", () => {
         currentOrder = "multiplier";
+        fixedSortBtn.classList.remove("primary")
+        multiplierSortBtn.classList.remove("primary")
+        multiplierSortBtn.classList.add("primary")
         renderResistanceList(currentDef1Idx, currentDef2Idx, currentOrder, currentTeraIdx);
       });
     }
 
+    function bindMatrixControls() {
+      const focusBtn = document.getElementById("focusKeyBtn");
+      const showAllBtn = document.getElementById("showAllBtn");
+      focusBtn.addEventListener("click", () => {
+        enableFocusMode();
+        focusBtn.classList.remove("primary")
+        showAllBtn.classList.remove("primary")
+        focusBtn.classList.add("primary")
+      });
+      showAllBtn.addEventListener("click", () => {
+        disableFocusMode();
+        focusBtn.classList.remove("primary")
+        showAllBtn.classList.remove("primary")
+        showAllBtn.classList.add("primary")
+      });
+    }
+
     function init() {
-      renderFullMatrix();
+      drawMatrix(null); // 初始完整矩阵
       initSelectors();
       bindSortEvents();
+      bindMatrixControls();
     }
     init();
   </script>
