@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <title>宝可梦属性克制计算器 | 太晶化参考 + 双属性抗性</title>
+  <title>宝可梦属性克制计算器 | 太晶化战术 + 双向克制预警</title>
   <style>
     * {
       box-sizing: border-box;
@@ -23,7 +23,6 @@
       margin: 0 auto;
     }
 
-    /* 标题区 */
     .header {
       text-align: center;
       margin-bottom: 20px;
@@ -41,7 +40,6 @@
       padding-top: 5px;
     }
 
-    /* 双属性选择卡 */
     .selector-card {
       background: white;
       border-radius: 24px;
@@ -125,7 +123,6 @@
       color: #3b5c7a;
     }
 
-    /* 太晶化独立区域 */
     .terastal-section {
       background: linear-gradient(135deg, #f8f0ff 0%, #f0e6ff 100%);
       border-radius: 24px;
@@ -184,7 +181,6 @@
       gap: 6px;
     }
 
-    /* 结果展示区 */
     .result-section {
       background: white;
       border-radius: 24px;
@@ -224,42 +220,68 @@
 
     .grid-list {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 8px;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
       padding: 1rem;
       background: #ffffff;
     }
 
     .type-card {
       border-radius: 40px;
-      padding: 6px 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      padding: 8px 12px;
       transition: 0.1s;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-      font-weight: 500;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
       border-left: 4px solid rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .card-main-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      width: 100%;
     }
 
     .type-name {
       font-weight: 700;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       text-shadow: 0 0 1px rgba(0, 0, 0, 0.05);
     }
 
     .multiplier {
       font-weight: 800;
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       font-family: monospace;
-      background: rgba(255, 255, 255, 0.7);
-      padding: 2px 8px;
+      background: rgba(255, 255, 255, 0.75);
+      padding: 2px 10px;
       border-radius: 40px;
-      min-width: 48px;
+      min-width: 52px;
       text-align: center;
+      line-height: 1.3;
     }
 
-    /* 倍率配色 */
+    .reverse-warning {
+      font-size: 0.7rem;
+      background: rgba(0, 0, 0, 0.6);
+      color: #ffec9f;
+      padding: 4px 8px;
+      border-radius: 32px;
+      display: inline-block;
+      width: fit-content;
+      max-width: 100%;
+      word-break: break-word;
+      backdrop-filter: blur(2px);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    .reverse-warning span {
+      font-weight: bold;
+      color: #ffb347;
+    }
+
     .weak .multiplier {
       color: #b71c1c;
       background: #ffebee;
@@ -281,7 +303,6 @@
       text-decoration: line-through;
     }
 
-    /* 完整克制表 */
     .matrix-section {
       background: white;
       border-radius: 24px;
@@ -309,14 +330,9 @@
       font-weight: 500;
     }
 
-    .matrix-table th {
-      padding: 6px 3px;
-      text-align: center;
-      border: 1px solid #dce5ef;
-    }
-
+    .matrix-table th,
     .matrix-table td {
-      padding: 10px 3px;
+      padding: 6px 3px;
       text-align: center;
       border: 1px solid #dce5ef;
     }
@@ -360,7 +376,6 @@
       padding: 6px;
     }
 
-    /* ========= 手机端深度优化 ========= */
     @media (max-width: 640px) {
       body {
         padding: 12px 10px;
@@ -385,13 +400,12 @@
 
       .grid-list {
         grid-template-columns: repeat(2, 1fr);
-        /* 手机两列布局 */
         gap: 8px;
         padding: 0.8rem;
       }
 
       .type-card {
-        padding: 5px 8px;
+        padding: 6px 10px;
       }
 
       .type-name {
@@ -399,15 +413,19 @@
       }
 
       .multiplier {
-        font-size: 0.9rem;
-        min-width: 42px;
+        font-size: 1.1rem;
+        min-width: 46px;
         padding: 2px 6px;
+      }
+
+      .reverse-warning {
+        font-size: 0.6rem;
+        padding: 3px 6px;
       }
 
       .result-header {
         flex-direction: column;
         align-items: flex-start;
-        padding: 0.7rem 1rem;
       }
 
       .sort-buttons {
@@ -417,63 +435,16 @@
       .terastal-section {
         padding: 0.9rem 1rem;
       }
-
-      .tera-select-group select {
-        font-size: 0.85rem;
-        padding: 8px 10px;
-      }
-
-      .tera-result-title {
-        font-size: 0.8rem;
-      }
-
-      .matrix-title {
-        padding: 0.8rem 1rem;
-        font-size: 0.9rem;
-      }
-
-      .matrix-table th,
-      .matrix-table td {
-        padding: 4px 2px;
-      }
-
-      .badge-combo {
-        padding: 8px 12px;
-      }
-
-      .combo-type {
-        font-size: 0.95rem;
-        padding: 3px 12px;
-      }
-
-      .combo-note {
-        font-size: 0.7rem;
-      }
-
-      .tera-note {
-        font-size: 0.65rem;
-      }
     }
 
-    /* 超小屏幕（折叠屏）进一步优化 */
     @media (max-width: 375px) {
       .grid-list {
         grid-template-columns: 1fr;
-        /* 极小屏幕单列，避免文字挤压 */
-      }
-
-      .type-card {
-        max-width: 100%;
       }
 
       .matrix-table {
         font-size: 0.65rem;
         min-width: 550px;
-      }
-
-      .matrix-table th,
-      .matrix-table td {
-        padding: 4px 2px;
       }
     }
   </style>
@@ -483,7 +454,7 @@
   <div class="container">
     <div class="header">
       <h1>✨ 宝可梦属性克制计算器 ✨</h1>
-      <div class="sub">双属性抗性 · 太晶化战术参考 · 高对比克制矩阵</div>
+      <div class="sub">双属性抗性 · 太晶化战术 · 双向克制预警 ⚠️</div>
     </div>
 
     <!-- 属性选择器 -->
@@ -511,13 +482,17 @@
     <!-- 双属性承受倍率结果 -->
     <div class="result-section">
       <div class="result-header">
-        <span>⚡ 双属性承受伤害倍率 (攻击方 → 防御组合)</span>
+        <span>⚡ 原始属性承受伤害倍率 (攻击方 → 防御组合)</span>
         <div class="sort-buttons">
           <button class="sort-btn" data-sort="fixed">📋 固定顺序</button>
           <button class="sort-btn" data-sort="multiplier">📊 按倍率排序</button>
         </div>
       </div>
       <div id="resistanceList" class="grid-list"></div>
+      <div class="footnote" style="text-align:left; margin-top:0; padding:0 1rem 0.8rem 1rem;">
+        ⚠️ <strong>反向克制预警</strong>：当某攻击属性对防御方造成高伤害(＞1倍)时，若该攻击属性自身也被防御方的原始属性（及太晶属性，如果已选择）所克制，则显示“反克: 属性名”。<br>
+        💡 太晶化后，原始属性列表仍会基于“原始属性+太晶属性”进行反向预警，太晶列表同理。
+      </div>
     </div>
 
     <!-- 太晶化独立参考区域 -->
@@ -539,7 +514,8 @@
           <!-- 太晶化倍率展示区 -->
         </div>
         <div class="tera-note" style="margin-top: 10px; display: inline-block;">
-          💡 说明：太晶化后宝可梦属性变为太晶属性，原始属性不再影响防御端。此表独立展示太晶化后的承受倍率，方便对比战术价值。
+          💡 说明：太晶化后宝可梦属性变为太晶属性，原始属性不再影响防御端。<br>
+          ⚠️ <strong>反向克制预警</strong>：若攻击方对太晶属性造成高伤害(＞1倍)，且该攻击方自身被原始属性或太晶属性克制，则会显示“反克: 属性名”。
         </div>
       </div>
     </div>
@@ -558,7 +534,7 @@
       </div>
       <div class="footnote">
         * 基于第八代/第九代标准克制表 · 双属性抵抗倍率 = 两属性倍率相乘 (免疫0倍则总为0)<br>
-        🎨 太晶化后防御属性替换为太晶属性，提供独立的倍率参考
+        🎨 太晶化后防御属性替换为太晶属性，提供独立的倍率参考 + 反向克制提醒
       </div>
     </div>
   </div>
@@ -569,11 +545,9 @@
       "一般", "格斗", "飞行", "毒", "地面", "岩石", "虫", "幽灵", "钢",
       "火", "水", "草", "电", "超能力", "冰", "龙", "恶", "妖精"
     ];
-
     const typeIndex = {};
     TYPES.forEach((t, idx) => { typeIndex[t] = idx; });
 
-    // 属性主题色
     const typeThemeColors = {
       "一般": "#bbbbaa", "格斗": "#bb5544", "飞行": "#6699ff", "毒": "#aa5599",
       "地面": "#ddbb55", "岩石": "#bbaa66", "虫": "#aabb22", "幽灵": "#6666bb",
@@ -581,12 +555,9 @@
       "电": "#ffcc33", "超能力": "#ff5599", "冰": "#77ddff", "龙": "#7766ee",
       "恶": "#775544", "妖精": "#ffaaff"
     };
-
     function getContrastColor(hex) {
       if (hex.startsWith('#')) {
-        let r = parseInt(hex.slice(1, 3), 16);
-        let g = parseInt(hex.slice(3, 5), 16);
-        let b = parseInt(hex.slice(5, 7), 16);
+        let r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
         const luminance = (0.299 * r + 0.587 * g + 0.114 * b);
         return luminance > 140 ? "#1e2a3a" : "#ffffff";
       }
@@ -595,75 +566,51 @@
 
     // ---------- 克制矩阵 ----------
     const effectiveness = Array(18).fill().map(() => Array(18).fill(1));
-
     function setEffect(attacker, defender, value) {
-      const aIdx = typeIndex[attacker];
-      const dIdx = typeIndex[defender];
+      const aIdx = typeIndex[attacker], dIdx = typeIndex[defender];
       if (aIdx !== undefined && dIdx !== undefined) effectiveness[aIdx][dIdx] = value;
     }
-
-    // 第六世代起
     const relations = [
       { att: "一般", def: "岩石", val: 0.5 }, { att: "一般", def: "幽灵", val: 0 }, { att: "一般", def: "钢", val: 0.5 },
-      // 格斗
       { att: "格斗", def: "一般", val: 2 }, { att: "格斗", def: "飞行", val: 0.5 }, { att: "格斗", def: "毒", val: 0.5 }, { att: "格斗", def: "岩石", val: 2 },
       { att: "格斗", def: "虫", val: 0.5 }, { att: "格斗", def: "幽灵", val: 0 }, { att: "格斗", def: "钢", val: 2 }, { att: "格斗", def: "超能力", val: 0.5 },
       { att: "格斗", def: "冰", val: 2 }, { att: "格斗", def: "恶", val: 2 }, { att: "格斗", def: "妖精", val: 0.5 },
-      // 飞行
       { att: "飞行", def: "格斗", val: 2 }, { att: "飞行", def: "岩石", val: 0.5 }, { att: "飞行", def: "虫", val: 2 }, { att: "飞行", def: "钢", val: 0.5 },
       { att: "飞行", def: "草", val: 2 }, { att: "飞行", def: "电", val: 0.5 },
-      // 毒
       { att: "毒", def: "毒", val: 0.5 }, { att: "毒", def: "地面", val: 0.5 }, { att: "毒", def: "岩石", val: 0.5 }, { att: "毒", def: "幽灵", val: 0.5 },
       { att: "毒", def: "钢", val: 0 }, { att: "毒", def: "草", val: 2 }, { att: "毒", def: "妖精", val: 2 },
-      // 地面
       { att: "地面", def: "飞行", val: 0 }, { att: "地面", def: "毒", val: 2 }, { att: "地面", def: "岩石", val: 2 }, { att: "地面", def: "虫", val: 0.5 },
       { att: "地面", def: "钢", val: 2 }, { att: "地面", def: "火", val: 2 }, { att: "地面", def: "草", val: 0.5 }, { att: "地面", def: "电", val: 2 },
-      // 岩石
       { att: "岩石", def: "格斗", val: 0.5 }, { att: "岩石", def: "飞行", val: 2 }, { att: "岩石", def: "地面", val: 0.5 }, { att: "岩石", def: "虫", val: 2 },
       { att: "岩石", def: "钢", val: 0.5 }, { att: "岩石", def: "火", val: 2 }, { att: "岩石", def: "冰", val: 2 },
-      // 虫
       { att: "虫", def: "格斗", val: 0.5 }, { att: "虫", def: "飞行", val: 0.5 }, { att: "虫", def: "毒", val: 0.5 }, { att: "虫", def: "幽灵", val: 0.5 },
       { att: "虫", def: "钢", val: 0.5 }, { att: "虫", def: "火", val: 0.5 }, { att: "虫", def: "草", val: 2 }, { att: "虫", def: "超能力", val: 2 },
       { att: "虫", def: "恶", val: 2 }, { att: "虫", def: "妖精", val: 0.5 },
-      // 幽灵
       { att: "幽灵", def: "一般", val: 0 }, { att: "幽灵", def: "幽灵", val: 2 }, { att: "幽灵", def: "超能力", val: 2 }, { att: "幽灵", def: "恶", val: 0.5 },
-      // 钢
       { att: "钢", def: "岩石", val: 2 }, { att: "钢", def: "钢", val: 0.5 }, { att: "钢", def: "火", val: 0.5 }, { att: "钢", def: "水", val: 0.5 },
       { att: "钢", def: "电", val: 0.5 }, { att: "钢", def: "冰", val: 2 }, { att: "钢", def: "妖精", val: 2 },
-      // 火
       { att: "火", def: "岩石", val: 0.5 }, { att: "火", def: "虫", val: 2 }, { att: "火", def: "钢", val: 2 }, { att: "火", def: "火", val: 0.5 },
       { att: "火", def: "水", val: 0.5 }, { att: "火", def: "草", val: 2 }, { att: "火", def: "冰", val: 2 }, { att: "火", def: "龙", val: 0.5 },
-      // 水
       { att: "水", def: "地面", val: 2 }, { att: "水", def: "岩石", val: 2 }, { att: "水", def: "火", val: 2 }, { att: "水", def: "水", val: 0.5 },
       { att: "水", def: "草", val: 0.5 }, { att: "水", def: "龙", val: 0.5 },
-      // 草
       { att: "草", def: "飞行", val: 0.5 }, { att: "草", def: "毒", val: 0.5 }, { att: "草", def: "地面", val: 2 }, { att: "草", def: "岩石", val: 2 },
       { att: "草", def: "虫", val: 0.5 }, { att: "草", def: "钢", val: 0.5 }, { att: "草", def: "火", val: 0.5 }, { att: "草", def: "水", val: 2 },
       { att: "草", def: "草", val: 0.5 }, { att: "草", def: "龙", val: 0.5 },
-      // 电
       { att: "电", def: "飞行", val: 2 }, { att: "电", def: "地面", val: 0 }, { att: "电", def: "水", val: 2 }, { att: "电", def: "草", val: 0.5 },
       { att: "电", def: "电", val: 0.5 }, { att: "电", def: "龙", val: 0.5 },
-      // 超能力
       { att: "超能力", def: "格斗", val: 2 }, { att: "超能力", def: "毒", val: 2 }, { att: "超能力", def: "钢", val: 0.5 }, { att: "超能力", def: "超能力", val: 0.5 },
       { att: "超能力", def: "恶", val: 0 },
-      // 冰
       { att: "冰", def: "飞行", val: 2 }, { att: "冰", def: "地面", val: 2 }, { att: "冰", def: "钢", val: 0.5 }, { att: "冰", def: "火", val: 0.5 },
       { att: "冰", def: "水", val: 0.5 }, { att: "冰", def: "草", val: 2 }, { att: "冰", def: "冰", val: 0.5 }, { att: "冰", def: "龙", val: 2 },
-      // 龙
       { att: "龙", def: "钢", val: 0.5 }, { att: "龙", def: "龙", val: 2 }, { att: "龙", def: "妖精", val: 0 },
-      // 恶
       { att: "恶", def: "格斗", val: 0.5 }, { att: "恶", def: "幽灵", val: 2 }, { att: "恶", def: "超能力", val: 2 }, { att: "恶", def: "恶", val: 0.5 },
       { att: "恶", def: "妖精", val: 0.5 },
-      // 妖精
       { att: "妖精", def: "格斗", val: 2 }, { att: "妖精", def: "毒", val: 0.5 }, { att: "妖精", def: "钢", val: 0.5 }, { att: "妖精", def: "火", val: 0.5 },
       { att: "妖精", def: "龙", val: 2 }, { att: "妖精", def: "恶", val: 2 },
     ];
     for (const r of relations) setEffect(r.att, r.def, r.val);
 
-    // 辅助函数
-    function getSingleEffectiveness(attackerIdx, defenderIdx) {
-      return effectiveness[attackerIdx][defenderIdx];
-    }
+    function getSingleEffectiveness(attackerIdx, defenderIdx) { return effectiveness[attackerIdx][defenderIdx]; }
     function getCombinedEffectiveness(attackerIdx, def1Idx, def2Idx) {
       if (def2Idx === null || def2Idx === undefined) return getSingleEffectiveness(attackerIdx, def1Idx);
       const rate1 = getSingleEffectiveness(attackerIdx, def1Idx);
@@ -678,7 +625,6 @@
       if (val === 0.5) return "½";
       if (val === 4) return "4";
       if (val === 0.25) return "¼";
-      if (val === 0.125) return "⅛";
       return val.toFixed(2);
     }
     function getClassByMultiplier(val) {
@@ -688,12 +634,32 @@
       return "normal";
     }
 
+    // 获取反向克制属性列表 (防御方的哪些属性克制攻击方)
+    function getReverseTypes(attIdx, defIdxs) {
+      // defIdxs: 属性索引数组 (去重, 可能包含原始双属性和太晶属性)
+      const result = [];
+      const seen = new Set();
+      for (let defIdx of defIdxs) {
+        if (defIdx === null || defIdx === undefined) continue;
+        const val = getSingleEffectiveness(defIdx, attIdx);  // 防御方属性作为攻击方时的倍率
+        if (val > 1) {
+          const typeName = TYPES[defIdx];
+          if (!seen.has(typeName)) {
+            seen.add(typeName);
+            result.push(typeName);
+          }
+        }
+      }
+      return result;
+    }
+
     let currentOrder = "fixed";
     let currentDef1Idx = 0, currentDef2Idx = null;
     let currentTeraIdx = null;
 
-    // 渲染双属性抵抗列表
-    function renderResistanceList(def1Idx, def2Idx, order = currentOrder) {
+    // 渲染双属性抵抗列表 (原始组合) 
+    // 核心改动：无论是否太晶化，只要攻击方对原始组合倍率>1，且攻击方被原始属性或太晶属性克制，就显示反向提醒
+    function renderResistanceList(def1Idx, def2Idx, order = currentOrder, teraIdx = currentTeraIdx) {
       const container = document.getElementById("resistanceList");
       if (!container) return;
       const rawResults = [];
@@ -704,8 +670,13 @@
       let sortedResults = [...rawResults];
       if (order === "fixed") sortedResults.sort((a, b) => a.idx - b.idx);
       else if (order === "multiplier") sortedResults.sort((a, b) => a.multiplier - b.multiplier);
-
       container.innerHTML = "";
+      // 原始防御属性列表 (用于反向克制，始终包含原始双属性)
+      const reverseDefIdxs = [def1Idx];
+      if (def2Idx !== null) reverseDefIdxs.push(def2Idx);
+      // 如果已选择太晶属性，也加入太晶属性用于反向判定
+      if (teraIdx !== null) reverseDefIdxs.push(teraIdx);
+
       for (const r of sortedResults) {
         const themeColor = typeThemeColors[r.name] || "#A0A0A0";
         const textColor = getContrastColor(themeColor);
@@ -714,30 +685,44 @@
         card.className = `type-card ${multiplierClass}`;
         card.style.background = themeColor;
         card.style.color = textColor;
-        const multDisplay = formatMultiplier(r.multiplier);
-        card.innerHTML = `<span class="type-name" style="color:${textColor};">${r.name}</span><span class="multiplier">${multDisplay}×</span>`;
+        let reverseHtml = "";
+        // 只要攻击方对原始属性倍率>1 就检查是否被原始属性或太晶属性克制
+        if (r.multiplier > 1) {
+          const reverseTypes = getReverseTypes(r.idx, reverseDefIdxs);
+          if (reverseTypes.length > 0) {
+            reverseHtml = `<div class="reverse-warning">⚠️ 反克: ${reverseTypes.join(", ")}</div>`;
+          }
+        }
+        card.innerHTML = `
+        <div class="card-main-row">
+          <span class="type-name" style="color:${textColor};">${r.name}</span>
+          <span class="multiplier">${formatMultiplier(r.multiplier)}×</span>
+        </div>
+        ${reverseHtml}
+      `;
         container.appendChild(card);
       }
     }
 
-    // 渲染太晶化承受倍率
-    function renderTeraResistance(teraTypeIdx) {
+    // 渲染太晶化承受倍率 (基于太晶属性 + 反向克制提醒：同时考虑原始属性+太晶属性)
+    function renderTeraResistance(teraTypeIdx, def1Idx, def2Idx) {
       const container = document.getElementById("teraResistanceList");
       if (!container) return;
-
       if (teraTypeIdx === null) {
         container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:20px; color:#6b21a5; background:#fdfcff; border-radius:40px;">✨ 请选择一个太晶属性，查看太晶化后的承受倍率</div>`;
         return;
       }
-
       const results = [];
       for (let i = 0; i < TYPES.length; i++) {
         const mult = getSingleEffectiveness(i, teraTypeIdx);
         results.push({ name: TYPES[i], multiplier: mult, idx: i });
       }
       results.sort((a, b) => a.idx - b.idx);
-
       container.innerHTML = "";
+      // 原始防御属性 + 太晶属性 用于反向克制判定
+      const reverseDefIdxs = [def1Idx];
+      if (def2Idx !== null) reverseDefIdxs.push(def2Idx);
+      reverseDefIdxs.push(teraTypeIdx);
       for (const r of results) {
         const themeColor = typeThemeColors[r.name] || "#A0A0A0";
         const textColor = getContrastColor(themeColor);
@@ -746,8 +731,20 @@
         card.className = `type-card ${multiplierClass}`;
         card.style.background = themeColor;
         card.style.color = textColor;
-        const multDisplay = formatMultiplier(r.multiplier);
-        card.innerHTML = `<span class="type-name" style="color:${textColor};">${r.name}</span><span class="multiplier">${multDisplay}×</span>`;
+        let reverseHtml = "";
+        if (r.multiplier > 1) {
+          const reverseTypes = getReverseTypes(r.idx, reverseDefIdxs);
+          if (reverseTypes.length > 0) {
+            reverseHtml = `<div class="reverse-warning">⚠️ 反克: ${reverseTypes.join(", ")}</div>`;
+          }
+        }
+        card.innerHTML = `
+        <div class="card-main-row">
+          <span class="type-name" style="color:${textColor};">${r.name}</span>
+          <span class="multiplier">${formatMultiplier(r.multiplier)}×</span>
+        </div>
+        ${reverseHtml}
+      `;
         container.appendChild(card);
       }
     }
@@ -767,7 +764,14 @@
       currentDef2Idx = def2Idx;
       const comboTextSpan = document.getElementById("comboText");
       comboTextSpan.innerText = def2Name ? `${def1Name} + ${def2Name}` : `${def1Name}`;
-      renderResistanceList(def1Idx, def2Idx, currentOrder);
+      // 重新渲染原始列表 (传入当前太晶索引，反向判定会包含太晶)
+      renderResistanceList(def1Idx, def2Idx, currentOrder, currentTeraIdx);
+      // 同时刷新太晶列表
+      if (currentTeraIdx !== null) {
+        renderTeraResistance(currentTeraIdx, def1Idx, def2Idx);
+      } else {
+        renderTeraResistance(null, def1Idx, def2Idx);
+      }
     }
 
     function updateTeraUI() {
@@ -778,7 +782,10 @@
       } else {
         currentTeraIdx = typeIndex[teraValue];
       }
-      renderTeraResistance(currentTeraIdx);
+      // 刷新原始列表 (因为太晶变化影响反向判定)
+      renderResistanceList(currentDef1Idx, currentDef2Idx, currentOrder, currentTeraIdx);
+      // 刷新太晶列表
+      renderTeraResistance(currentTeraIdx, currentDef1Idx, currentDef2Idx);
     }
 
     // 完整克制表渲染
@@ -791,7 +798,7 @@
         const textColor = getContrastColor(bgColor);
         headHtml += `<th style="background-color: ${bgColor}; color: ${textColor};">${defType}</th>`;
       }
-      headHtml += "</table>";
+      headHtml += "</tr>";
       thead.innerHTML = headHtml;
       let bodyHtml = "";
       for (let attIdx = 0; attIdx < TYPES.length; attIdx++) {
@@ -818,7 +825,6 @@
       const typeASelect = document.getElementById("typeA");
       const typeBSelect = document.getElementById("typeB");
       const teraSelect = document.getElementById("teraType");
-
       for (let t of TYPES) {
         const optA = document.createElement("option"); optA.value = t; optA.textContent = t;
         typeASelect.appendChild(optA);
@@ -830,7 +836,6 @@
       typeASelect.value = "一般";
       typeBSelect.value = "none";
       teraSelect.value = "none";
-
       typeASelect.addEventListener("change", () => {
         if (typeBSelect.value !== "none" && typeBSelect.value === typeASelect.value) typeBSelect.value = "none";
         updateUI();
@@ -843,7 +848,6 @@
         updateUI();
       });
       teraSelect.addEventListener("change", () => updateTeraUI());
-
       updateUI();
       updateTeraUI();
     }
@@ -851,11 +855,11 @@
     function bindSortEvents() {
       document.querySelector("[data-sort='fixed']").addEventListener("click", () => {
         currentOrder = "fixed";
-        renderResistanceList(currentDef1Idx, currentDef2Idx, currentOrder);
+        renderResistanceList(currentDef1Idx, currentDef2Idx, currentOrder, currentTeraIdx);
       });
       document.querySelector("[data-sort='multiplier']").addEventListener("click", () => {
         currentOrder = "multiplier";
-        renderResistanceList(currentDef1Idx, currentDef2Idx, currentOrder);
+        renderResistanceList(currentDef1Idx, currentDef2Idx, currentOrder, currentTeraIdx);
       });
     }
 
