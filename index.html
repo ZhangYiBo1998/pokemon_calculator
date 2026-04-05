@@ -804,7 +804,7 @@
         card.style.background = themeColor;
         card.style.color = textColor;
         let reverseHtml = "";
-        if (r.multiplier > 1) {
+        if (r.multiplier >= 1) {
           const reverseTypes = getReverseTypes(r.idx, reverseDefIdxs);
           if (reverseTypes.length > 0) {
             reverseHtml = `<div class="reverse-warning">⚠️ 反克: ${reverseTypes.join(", ")}</div>`;
