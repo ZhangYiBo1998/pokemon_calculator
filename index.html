@@ -356,9 +356,9 @@
 
     .matrix-table {
       width: 100%;
+      table-layout: fixed;
       border-collapse: collapse;
       font-size: 1rem;
-      min-width: 600px;
       font-weight: 500;
     }
 
@@ -374,6 +374,64 @@
       position: sticky;
       top: 0;
       font-size: 0.7rem;
+    }
+
+    .diagonal-header {
+      position: relative;
+      width: 6em;
+      height: 3.5em;
+      overflow: hidden;
+      padding: 0;
+    }
+
+    .diagonal-header .diagonal-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to top right, transparent calc(50% - 0.5px), #aaa calc(50% - 0.5px), #aaa calc(50% + 0.5px), transparent calc(50% + 0.5px));
+      pointer-events: none;
+    }
+
+    .diagonal-header .top-right {
+      position: absolute;
+      top: 6px;
+      right: 4px;
+      font-size: 0.6rem;
+      line-height: 1;
+      text-align: right;
+    }
+
+    .diagonal-header-right .diagonal-line {
+      background: linear-gradient(to bottom right, transparent calc(50% - 0.5px), #aaa calc(50% - 0.5px), #aaa calc(50% + 0.5px), transparent calc(50% + 0.5px));
+    }
+
+    .diagonal-header .bottom-left {
+      position: absolute;
+      bottom: 4px;
+      left: 4px;
+      font-size: 0.6rem;
+      line-height: 1;
+      text-align: left;
+    }
+
+    .diagonal-header-right .top-left {
+      position: absolute;
+      top: 6px;
+      left: 4px;
+      font-size: 0.6rem;
+      line-height: 1;
+      text-align: left;
+    }
+
+    .diagonal-header-right .bottom-right {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      font-size: 0.6rem;
+      line-height: 1;
+      text-align: right;
     }
 
     .cell-2 {
@@ -486,7 +544,6 @@
 
       .matrix-table {
         font-size: 0.65rem;
-        min-width: 550px;
       }
     }
   </style>
@@ -728,13 +785,16 @@
       const thead = document.getElementById("matrixHead");
       const tbody = document.getElementById("matrixBody");
       // 表头（防御方列）始终完整展示
-      let headHtml = "<tr><th style='width: 6em;'>攻击方 ↓ / 防御方 →</th>";
+      const leftHeader = `<th class="diagonal-header"><div class="diagonal-line"></div><div class="top-right">防御方</div><div class="bottom-left">攻击方</div></th>`;
+      const rightHeader = `<th class="diagonal-header diagonal-header-right"><div class="diagonal-line"></div><div class="top-left">防御方</div><div class="bottom-right">攻击方</div></th>`;
+      let headHtml = "<tr>" + leftHeader;
       for (let defType of TYPES) {
         const bgColor = typeThemeColors[defType] || "#aaaaaa";
         const textColor = getContrastColor(bgColor);
-        headHtml += `<th style="background-color: ${bgColor}; color: ${textColor};">${defType}</th>`;
+        const colWidth = defType.length <= 2 ? "3em" : `${defType.length + 1}em`;
+        headHtml += `<th style="background-color: ${bgColor}; color: ${textColor}; width: ${colWidth};">${defType}</th>`;
       }
-      headHtml += "<th style='width: 6em;'>攻击方 ↓ / 防御方 →</th>";
+      headHtml += rightHeader;
       headHtml += "</tr>";
       thead.innerHTML = headHtml;
 
@@ -746,7 +806,7 @@
         const attName = TYPES[attIdx];
         const bgColor = typeThemeColors[attName] || "#aaaaaa";
         const textColor = getContrastColor(bgColor);
-        const rowBg = rowNum % 2 === 0 ? "#ffffff" : "#e8ecf1";
+        const rowBg = bgColor + "50";
         bodyHtml += `<tr style="background-color: ${rowBg};"><td style="background-color: ${bgColor}; color: ${textColor}; font-weight: 700;">${attName}</td>`;
         for (let defIdx = 0; defIdx < TYPES.length; defIdx++) {
           const val = effectiveness[attIdx][defIdx];
