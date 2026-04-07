@@ -734,6 +734,7 @@
         const textColor = getContrastColor(bgColor);
         headHtml += `<th style="background-color: ${bgColor}; color: ${textColor};">${defType}</th>`;
       }
+      headHtml += "<th style='width: 6em;'>攻击方 ↓ / 防御方 →</th>";
       headHtml += "</tr>";
       thead.innerHTML = headHtml;
 
@@ -755,6 +756,7 @@
           else { display = val; cellClass = "cell-1"; }
           bodyHtml += `<td class="${cellClass}"><strong>${display}</strong></td>`;
         }
+        bodyHtml += `<td style="background-color: ${bgColor}; color: ${textColor}; font-weight: 700;">${attName}</td>`;
         bodyHtml += "</tr>";
       }
       tbody.innerHTML = bodyHtml;
