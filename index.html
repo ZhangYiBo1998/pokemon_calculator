@@ -532,7 +532,7 @@
       </div>
       <div id="resistanceList" class="grid-list"></div>
       <div class="footnote" style="text-align:left; margin-top:0; padding:0 1rem 0.8rem 1rem;">
-        ⚠️ <strong>反向克制预警</strong>：当某攻击属性对防御方造成高伤害(＞1倍)时，若该攻击属性自身也被防御方的原始属性（及太晶属性，如果已选择）所克制，则显示“反克: 属性名”。<br>
+        ⚠️ <strong>反向克制预警</strong>：当属性被防御方的原始属性（及太晶属性，如果已选择）所克制，则显示“被 属性名 克制”。<br>
         💡 太晶化后，原始属性列表仍会基于“原始属性+太晶属性”进行反向预警，太晶列表同理。
       </div>
     </div>
@@ -557,7 +557,7 @@
         </div>
         <div class="tera-note" style="margin-top: 10px; display: inline-block;">
           💡 说明：太晶化后宝可梦属性变为太晶属性，原始属性不再影响防御端。<br>
-          ⚠️ <strong>反向克制预警</strong>：若攻击方对太晶属性造成高伤害(＞1倍)，且该攻击方自身被原始属性或太晶属性克制，则会显示“反克: 属性名”。
+          ⚠️ <strong>反向克制预警</strong>：若属性被原始属性或太晶属性克制，则会显示“被 属性名 克制”。
         </div>
       </div>
     </div>
@@ -804,11 +804,9 @@
         card.style.background = themeColor;
         card.style.color = textColor;
         let reverseHtml = "";
-        if (r.multiplier >= 1) {
-          const reverseTypes = getReverseTypes(r.idx, reverseDefIdxs);
-          if (reverseTypes.length > 0) {
-            reverseHtml = `<div class="reverse-warning">⚠️ 反克: ${reverseTypes.join(", ")}</div>`;
-          }
+        const reverseTypes = getReverseTypes(r.idx, reverseDefIdxs);
+        if (reverseTypes.length > 0) {
+          reverseHtml = `<div class="reverse-warning">⚠️被 ${reverseTypes.join(", ")} 克制</div>`;
         }
         card.innerHTML = `
         <div class="card-main-row">
@@ -847,11 +845,9 @@
         card.style.background = themeColor;
         card.style.color = textColor;
         let reverseHtml = "";
-        if (r.multiplier > 1) {
-          const reverseTypes = getReverseTypes(r.idx, reverseDefIdxs);
-          if (reverseTypes.length > 0) {
-            reverseHtml = `<div class="reverse-warning">⚠️ 反克: ${reverseTypes.join(", ")}</div>`;
-          }
+        const reverseTypes = getReverseTypes(r.idx, reverseDefIdxs);
+        if (reverseTypes.length > 0) {
+          reverseHtml = `<div class="reverse-warning">⚠️被 ${reverseTypes.join(", ")} 克制</div>`;
         }
         card.innerHTML = `
         <div class="card-main-row">
