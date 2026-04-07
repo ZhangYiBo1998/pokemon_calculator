@@ -383,7 +383,7 @@
     }
 
     .cell-1 {
-      background-color: #f5f7fa;
+      background-color: transparent;
       color: #2c3e4e;
     }
 
@@ -741,11 +741,13 @@
       let bodyHtml = "";
       // 确定要遍历的攻击方索引
       let attIndices = (attIndicesFilter === null) ? TYPES.map((_, idx) => idx) : attIndicesFilter;
-      for (let attIdx of attIndices) {
+      for (let rowNum = 0; rowNum < attIndices.length; rowNum++) {
+        const attIdx = attIndices[rowNum];
         const attName = TYPES[attIdx];
         const bgColor = typeThemeColors[attName] || "#aaaaaa";
         const textColor = getContrastColor(bgColor);
-        bodyHtml += `<tr><td style="background-color: ${bgColor}; color: ${textColor}; font-weight: 700;">${attName}</td>`;
+        const rowBg = rowNum % 2 === 0 ? "#ffffff" : "#e8ecf1";
+        bodyHtml += `<tr style="background-color: ${rowBg};"><td style="background-color: ${bgColor}; color: ${textColor}; font-weight: 700;">${attName}</td>`;
         for (let defIdx = 0; defIdx < TYPES.length; defIdx++) {
           const val = effectiveness[attIdx][defIdx];
           let cellClass = "", display = "";
