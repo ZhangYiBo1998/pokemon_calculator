@@ -876,50 +876,65 @@
       return "#1e2a3a";
     }
 
-    // ---------- 克制矩阵 ----------
-    const effectiveness = Array(18).fill().map(() => Array(18).fill(1));
-    function setEffect(attacker, defender, value) {
-      const aIdx = typeIndex[attacker], dIdx = typeIndex[defender];
-      if (aIdx !== undefined && dIdx !== undefined) effectiveness[aIdx][dIdx] = value;
+    // ---------- 克制关系数据（按攻击方分组） ----------
+    const strongAgainst = { // 2 倍克制
+      "格斗":  ["一般", "岩石", "钢", "冰", "恶"],
+      "飞行":  ["格斗", "虫", "草"],
+      "毒":    ["草", "妖精"],
+      "地面":  ["毒", "岩石", "钢", "火", "电"],
+      "岩石":  ["飞行", "虫", "火", "冰"],
+      "虫":    ["草", "超能力", "恶"],
+      "幽灵":  ["幽灵", "超能力"],
+      "钢":    ["岩石", "冰", "妖精"],
+      "火":    ["虫", "钢", "草", "冰"],
+      "水":    ["地面", "岩石", "火"],
+      "草":    ["地面", "岩石", "水"],
+      "电":    ["飞行", "水"],
+      "超能力":["格斗", "毒"],
+      "冰":    ["飞行", "地面", "草", "龙"],
+      "龙":    ["龙"],
+      "恶":    ["幽灵", "超能力"],
+      "妖精":  ["格斗", "龙", "恶"],
+    };
+    const weakAgainst = { // ½ 倍被抵抗
+      "一般":  ["岩石", "钢"],
+      "格斗":  ["飞行", "毒", "虫", "超能力", "妖精"],
+      "飞行":  ["岩石", "钢", "电"],
+      "毒":    ["毒", "地面", "岩石", "幽灵"],
+      "地面":  ["虫", "草"],
+      "岩石":  ["格斗", "地面", "钢"],
+      "虫":    ["格斗", "飞行", "毒", "幽灵", "钢", "火", "妖精"],
+      "幽灵":  ["恶"],
+      "钢":    ["钢", "火", "水", "电"],
+      "火":    ["岩石", "火", "水", "龙"],
+      "水":    ["水", "草", "龙"],
+      "草":    ["飞行", "毒", "虫", "钢", "火", "草", "龙"],
+      "电":    ["草", "电", "龙"],
+      "超能力":["钢", "超能力"],
+      "冰":    ["钢", "火", "水", "冰"],
+      "龙":    ["钢"],
+      "恶":    ["格斗", "恶", "妖精"],
+      "妖精":  ["毒", "钢", "火"],
+    };
+    const immuneAgainst = { // 0 倍免疫
+      "一般":  ["幽灵"],
+      "格斗":  ["幽灵"],
+      "毒":    ["钢"],
+      "地面":  ["飞行"],
+      "幽灵":  ["一般"],
+      "电":    ["地面"],
+      "超能力":["恶"],
+      "龙":    ["妖精"],
+    };
+
+    function buildRelations(strong, weak, immune) {
+      const r = [];
+      for (const [att, defs] of Object.entries(strong)) defs.forEach(def => r.push({ att, def, val: 2 }));
+      for (const [att, defs] of Object.entries(weak))   defs.forEach(def => r.push({ att, def, val: 0.5 }));
+      for (const [att, defs] of Object.entries(immune)) defs.forEach(def => r.push({ att, def, val: 0 }));
+      return r;
     }
-    const relations = [
-      { att: "一般", def: "岩石", val: 0.5 }, { att: "一般", def: "幽灵", val: 0 }, { att: "一般", def: "钢", val: 0.5 },
-      { att: "格斗", def: "一般", val: 2 }, { att: "格斗", def: "飞行", val: 0.5 }, { att: "格斗", def: "毒", val: 0.5 }, { att: "格斗", def: "岩石", val: 2 },
-      { att: "格斗", def: "虫", val: 0.5 }, { att: "格斗", def: "幽灵", val: 0 }, { att: "格斗", def: "钢", val: 2 }, { att: "格斗", def: "超能力", val: 0.5 },
-      { att: "格斗", def: "冰", val: 2 }, { att: "格斗", def: "恶", val: 2 }, { att: "格斗", def: "妖精", val: 0.5 },
-      { att: "飞行", def: "格斗", val: 2 }, { att: "飞行", def: "岩石", val: 0.5 }, { att: "飞行", def: "虫", val: 2 }, { att: "飞行", def: "钢", val: 0.5 },
-      { att: "飞行", def: "草", val: 2 }, { att: "飞行", def: "电", val: 0.5 },
-      { att: "毒", def: "毒", val: 0.5 }, { att: "毒", def: "地面", val: 0.5 }, { att: "毒", def: "岩石", val: 0.5 }, { att: "毒", def: "幽灵", val: 0.5 },
-      { att: "毒", def: "钢", val: 0 }, { att: "毒", def: "草", val: 2 }, { att: "毒", def: "妖精", val: 2 },
-      { att: "地面", def: "飞行", val: 0 }, { att: "地面", def: "毒", val: 2 }, { att: "地面", def: "岩石", val: 2 }, { att: "地面", def: "虫", val: 0.5 },
-      { att: "地面", def: "钢", val: 2 }, { att: "地面", def: "火", val: 2 }, { att: "地面", def: "草", val: 0.5 }, { att: "地面", def: "电", val: 2 },
-      { att: "岩石", def: "格斗", val: 0.5 }, { att: "岩石", def: "飞行", val: 2 }, { att: "岩石", def: "地面", val: 0.5 }, { att: "岩石", def: "虫", val: 2 },
-      { att: "岩石", def: "钢", val: 0.5 }, { att: "岩石", def: "火", val: 2 }, { att: "岩石", def: "冰", val: 2 },
-      { att: "虫", def: "格斗", val: 0.5 }, { att: "虫", def: "飞行", val: 0.5 }, { att: "虫", def: "毒", val: 0.5 }, { att: "虫", def: "幽灵", val: 0.5 },
-      { att: "虫", def: "钢", val: 0.5 }, { att: "虫", def: "火", val: 0.5 }, { att: "虫", def: "草", val: 2 }, { att: "虫", def: "超能力", val: 2 },
-      { att: "虫", def: "恶", val: 2 }, { att: "虫", def: "妖精", val: 0.5 },
-      { att: "幽灵", def: "一般", val: 0 }, { att: "幽灵", def: "幽灵", val: 2 }, { att: "幽灵", def: "超能力", val: 2 }, { att: "幽灵", def: "恶", val: 0.5 },
-      { att: "钢", def: "岩石", val: 2 }, { att: "钢", def: "钢", val: 0.5 }, { att: "钢", def: "火", val: 0.5 }, { att: "钢", def: "水", val: 0.5 },
-      { att: "钢", def: "电", val: 0.5 }, { att: "钢", def: "冰", val: 2 }, { att: "钢", def: "妖精", val: 2 },
-      { att: "火", def: "岩石", val: 0.5 }, { att: "火", def: "虫", val: 2 }, { att: "火", def: "钢", val: 2 }, { att: "火", def: "火", val: 0.5 },
-      { att: "火", def: "水", val: 0.5 }, { att: "火", def: "草", val: 2 }, { att: "火", def: "冰", val: 2 }, { att: "火", def: "龙", val: 0.5 },
-      { att: "水", def: "地面", val: 2 }, { att: "水", def: "岩石", val: 2 }, { att: "水", def: "火", val: 2 }, { att: "水", def: "水", val: 0.5 },
-      { att: "水", def: "草", val: 0.5 }, { att: "水", def: "龙", val: 0.5 },
-      { att: "草", def: "飞行", val: 0.5 }, { att: "草", def: "毒", val: 0.5 }, { att: "草", def: "地面", val: 2 }, { att: "草", def: "岩石", val: 2 },
-      { att: "草", def: "虫", val: 0.5 }, { att: "草", def: "钢", val: 0.5 }, { att: "草", def: "火", val: 0.5 }, { att: "草", def: "水", val: 2 },
-      { att: "草", def: "草", val: 0.5 }, { att: "草", def: "龙", val: 0.5 },
-      { att: "电", def: "飞行", val: 2 }, { att: "电", def: "地面", val: 0 }, { att: "电", def: "水", val: 2 }, { att: "电", def: "草", val: 0.5 },
-      { att: "电", def: "电", val: 0.5 }, { att: "电", def: "龙", val: 0.5 },
-      { att: "超能力", def: "格斗", val: 2 }, { att: "超能力", def: "毒", val: 2 }, { att: "超能力", def: "钢", val: 0.5 }, { att: "超能力", def: "超能力", val: 0.5 },
-      { att: "超能力", def: "恶", val: 0 },
-      { att: "冰", def: "飞行", val: 2 }, { att: "冰", def: "地面", val: 2 }, { att: "冰", def: "钢", val: 0.5 }, { att: "冰", def: "火", val: 0.5 },
-      { att: "冰", def: "水", val: 0.5 }, { att: "冰", def: "草", val: 2 }, { att: "冰", def: "冰", val: 0.5 }, { att: "冰", def: "龙", val: 2 },
-      { att: "龙", def: "钢", val: 0.5 }, { att: "龙", def: "龙", val: 2 }, { att: "龙", def: "妖精", val: 0 },
-      { att: "恶", def: "格斗", val: 0.5 }, { att: "恶", def: "幽灵", val: 2 }, { att: "恶", def: "超能力", val: 2 }, { att: "恶", def: "恶", val: 0.5 },
-      { att: "恶", def: "妖精", val: 0.5 },
-      { att: "妖精", def: "格斗", val: 2 }, { att: "妖精", def: "毒", val: 0.5 }, { att: "妖精", def: "钢", val: 0.5 }, { att: "妖精", def: "火", val: 0.5 },
-      { att: "妖精", def: "龙", val: 2 }, { att: "妖精", def: "恶", val: 2 },
-    ];
+    const relations = buildRelations(strongAgainst, weakAgainst, immuneAgainst);
     for (const r of relations) setEffect(r.att, r.def, r.val);
 
     // ====================================================================
