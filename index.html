@@ -354,34 +354,62 @@
       opacity: 0.8;
     }
 
-    .matrix-table {
-      width: 100%;
-      table-layout: fixed;
-      border-collapse: collapse;
+    .matrix-grid {
+      display: flex;
+      flex-direction: column;
       font-size: 1rem;
       font-weight: 500;
+      width: 100%;
     }
 
-    .matrix-table th,
-    .matrix-table td {
+    .matrix-row {
+      display: grid;
+    }
+
+    .matrix-header-row {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .matrix-col-header {
       padding: 6px 3px;
       text-align: center;
       border: 1px solid #dce5ef;
+      font-weight: 700;
+      font-size: 0.7rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
     }
 
-    .matrix-table th {
+    .matrix-cell {
+      padding: 6px 3px;
+      text-align: center;
+      border: 1px solid #dce5ef;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .matrix-row-header {
+      padding: 6px 3px;
+      text-align: center;
+      border: 1px solid #dce5ef;
       font-weight: 700;
-      position: sticky;
-      top: 0;
-      font-size: 0.7rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .diagonal-header {
       position: relative;
-      width: 6em;
       height: 3.5em;
       overflow: hidden;
       padding: 0;
+      border: 1px solid #dce5ef;
+      z-index: 11;
     }
 
     .diagonal-header .diagonal-line {
@@ -466,6 +494,124 @@
       padding: 6px;
     }
 
+    .matrix-filters {
+      padding: 0 1.2rem 0.6rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      border-bottom: 1px solid #edf2f7;
+      margin-bottom: 0.3rem;
+    }
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .filter-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #64748b;
+      white-space: nowrap;
+      min-width: 4.2em;
+    }
+    .multi-select {
+      position: relative;
+      min-width: 130px;
+    }
+    .multi-select-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 4px 12px;
+      background: white;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.1s;
+      color: #1e293b;
+      min-height: 28px;
+      white-space: nowrap;
+      max-width: 220px;
+    }
+    .multi-select-trigger:hover {
+      border-color: #cbd5e1;
+    }
+    .multi-select-trigger.open {
+      border-color: #3b82f6;
+    }
+    .multi-select-arrow {
+      font-size: 0.6rem;
+      color: #94a3b8;
+      transition: transform 0.15s;
+      flex-shrink: 0;
+    }
+    .multi-select-arrow.open {
+      transform: rotate(180deg);
+    }
+    .multi-select-dropdown {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      z-index: 100;
+      background: white;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      padding: 6px;
+      min-width: 150px;
+      max-height: 320px;
+      overflow-y: auto;
+      display: none;
+    }
+    .multi-select-dropdown.open {
+      display: block;
+    }
+    .multi-select-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 500;
+      transition: 0.05s;
+    }
+    .multi-select-option:hover {
+      background: #f1f5f9;
+    }
+    .multi-select-option input[type="checkbox"] {
+      margin: 0;
+      accent-color: #3b82f6;
+    }
+
+    .filter-clear {
+      background: none;
+      border: 1px solid #e2e8f0;
+      border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      padding: 0;
+      flex-shrink: 0;
+      transition: 0.1s;
+      line-height: 1;
+    }
+    .filter-clear:hover {
+      background: #fee2e2;
+      border-color: #fca5a5;
+      color: #ef4444;
+    }
+
     @media (max-width: 640px) {
       body {
         padding: 12px 10px;
@@ -535,6 +681,25 @@
       .matrix-controls {
         justify-content: flex-end;
       }
+
+      .multi-select-trigger {
+        min-height: 36px;
+        font-size: 0.8rem;
+        padding: 6px 12px;
+      }
+      .multi-select-dropdown {
+        min-width: 180px;
+        max-height: 50vh;
+        padding: 8px;
+      }
+      .multi-select-option {
+        padding: 10px 10px;
+        font-size: 0.85rem;
+      }
+      .multi-select-option input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+      }
     }
 
     @media (max-width: 375px) {
@@ -542,7 +707,7 @@
         grid-template-columns: 1fr;
       }
 
-      .matrix-table {
+      .matrix-grid {
         font-size: 0.65rem;
       }
     }
@@ -628,11 +793,32 @@
           <button id="focusKeyBtn" class="matrix-btn">🎯 聚焦关键属性</button>
         </div>
       </div>
+      <div class="matrix-filters">
+        <div class="filter-group">
+          <span class="filter-label">攻击方</span>
+          <div class="multi-select" id="attMultiSelect">
+            <div class="multi-select-trigger" id="attTrigger">
+              <span id="attTriggerText">全部</span>
+              <span class="multi-select-arrow">▾</span>
+            </div>
+            <div class="multi-select-dropdown" id="attDropdown"></div>
+          </div>
+          <button class="filter-clear" data-side="att" title="清空攻击方筛选">✕</button>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">防御方</span>
+          <div class="multi-select" id="defMultiSelect">
+            <div class="multi-select-trigger" id="defTrigger">
+              <span id="defTriggerText">全部</span>
+              <span class="multi-select-arrow">▾</span>
+            </div>
+            <div class="multi-select-dropdown" id="defDropdown"></div>
+          </div>
+          <button class="filter-clear" data-side="def" title="清空防御方筛选">✕</button>
+        </div>
+      </div>
       <div style="overflow-x: auto;">
-        <table class="matrix-table" id="fullMatrix">
-          <thead id="matrixHead"></thead>
-          <tbody id="matrixBody"></tbody>
-        </table>
+        <div class="matrix-grid" id="matrixGrid"></div>
       </div>
       <div class="footnote">
         * 基于第八代/第九代标准克制表 · 双属性抵抗倍率 = 两属性倍率相乘 (免疫0倍则总为0)<br>
@@ -762,6 +948,10 @@
     let focusMode = false;      // 矩阵聚焦模式
     let focusedAttIndices = []; // 聚焦模式下显示的属性索引列表
 
+    // 筛选状态（芯片选择）
+    let attFilterSet = new Set(); // 空 = 显示全部
+    let defFilterSet = new Set(); // 空 = 显示全部
+
     // 计算当前关键属性索引（原始双属性+太晶，去重）
     function computeKeyIndices() {
       const indices = new Set();
@@ -780,35 +970,63 @@
       }
     }
 
-    // 绘制矩阵 (attIndicesFilter 为 null 表示全部, 否则为索引数组)
+    // 绘制矩阵 (Grid 布局)
+    // attIndicesFilter: null=显示所有攻击方, 数组=仅显示指定索引; defFilterSet/attFilterSet 另作筛选
     function drawMatrix(attIndicesFilter) {
-      const thead = document.getElementById("matrixHead");
-      const tbody = document.getElementById("matrixBody");
-      // 表头（防御方列）始终完整展示
-      const leftHeader = `<th class="diagonal-header"><div class="diagonal-line"></div><div class="top-right">防御方</div><div class="bottom-left">攻击方</div></th>`;
-      const rightHeader = `<th class="diagonal-header diagonal-header-right"><div class="diagonal-line"></div><div class="top-left">防御方</div><div class="bottom-right">攻击方</div></th>`;
-      let headHtml = "<tr>" + leftHeader;
-      for (let defType of TYPES) {
+      const container = document.getElementById("matrixGrid");
+      if (!container) return;
+
+      // 应用筛选：列筛选（防御方），空=显示全部
+      let defIndices;
+      if (defFilterSet.size > 0) {
+        defIndices = TYPES.map((_, idx) => idx).filter(idx => defFilterSet.has(idx));
+      } else {
+        defIndices = TYPES.map((_, idx) => idx);
+      }
+      // 行筛选（攻击方）：基础行集与 attFilterSet 取交集，空=显示全部
+      const baseIndices = (attIndicesFilter === null) ? TYPES.map((_, idx) => idx) : attIndicesFilter;
+      let attIndices;
+      if (attFilterSet.size > 0) {
+        attIndices = baseIndices.filter(idx => attFilterSet.has(idx));
+      } else {
+        attIndices = baseIndices;
+      }
+
+      // 空状态
+      if (attIndices.length === 0 || defIndices.length === 0) {
+        container.innerHTML = `<div style="text-align:center;padding:2rem;color:#94a3b8;font-size:0.9rem;">请至少选择一个属性进行筛选</div>`;
+        return;
+      }
+
+      // 构建 grid 列模板：两侧固定6em，中间每列至少3em并按比例铺满剩余空间
+      const gridTemplate = `6em repeat(${defIndices.length}, minmax(3em,1fr)) 6em`;
+
+      let html = "";
+
+      // 表头行
+      html += `<div class="matrix-row matrix-header-row" style="grid-template-columns:${gridTemplate};">`;
+      html += `<div class="diagonal-header"><div class="diagonal-line"></div><div class="top-right">防御方</div><div class="bottom-left">攻击方</div></div>`;
+      for (let defIdx of defIndices) {
+        const defType = TYPES[defIdx];
         const bgColor = typeThemeColors[defType] || "#aaaaaa";
         const textColor = getContrastColor(bgColor);
-        const colWidth = defType.length <= 2 ? "3em" : `${defType.length + 1}em`;
-        headHtml += `<th style="background-color: ${bgColor}; color: ${textColor}; width: ${colWidth};">${defType}</th>`;
+        html += `<div class="matrix-col-header" style="background:${bgColor};color:${textColor};">${defType}</div>`;
       }
-      headHtml += rightHeader;
-      headHtml += "</tr>";
-      thead.innerHTML = headHtml;
+      html += `<div class="diagonal-header diagonal-header-right"><div class="diagonal-line"></div><div class="top-left">防御方</div><div class="bottom-right">攻击方</div></div>`;
+      html += `</div>`;
 
-      let bodyHtml = "";
-      // 确定要遍历的攻击方索引
-      let attIndices = (attIndicesFilter === null) ? TYPES.map((_, idx) => idx) : attIndicesFilter;
+      // 数据行
       for (let rowNum = 0; rowNum < attIndices.length; rowNum++) {
         const attIdx = attIndices[rowNum];
         const attName = TYPES[attIdx];
         const bgColor = typeThemeColors[attName] || "#aaaaaa";
         const textColor = getContrastColor(bgColor);
         const rowBg = bgColor + "50";
-        bodyHtml += `<tr style="background-color: ${rowBg};"><td style="background-color: ${bgColor}; color: ${textColor}; font-weight: 700;">${attName}</td>`;
-        for (let defIdx = 0; defIdx < TYPES.length; defIdx++) {
+
+        html += `<div class="matrix-row" style="grid-template-columns:${gridTemplate};background:${rowBg};">`;
+        html += `<div class="matrix-row-header" style="background:${bgColor};color:${textColor};">${attName}</div>`;
+
+        for (let defIdx of defIndices) {
           const val = effectiveness[attIdx][defIdx];
           let cellClass = "", display = "";
           if (val === 2) { cellClass = "cell-2"; display = "2"; }
@@ -816,22 +1034,31 @@
           else if (val === 0.5) { cellClass = "cell-05"; display = "½"; }
           else if (val === 0) { cellClass = "cell-0"; display = "0"; }
           else { display = val; cellClass = "cell-1"; }
-          bodyHtml += `<td class="${cellClass}"><strong>${display}</strong></td>`;
+          html += `<div class="matrix-cell ${cellClass}"><strong>${display}</strong></div>`;
         }
-        bodyHtml += `<td style="background-color: ${bgColor}; color: ${textColor}; font-weight: 700;">${attName}</td>`;
-        bodyHtml += "</tr>";
+
+        html += `<div class="matrix-row-header" style="background:${bgColor};color:${textColor};">${attName}</div>`;
+        html += `</div>`;
       }
-      tbody.innerHTML = bodyHtml;
+
+      container.innerHTML = html;
     }
 
-    // 聚焦关键属性
+    // 聚焦关键属性（同时重置筛选，确保聚焦效果完整可见）
     function enableFocusMode() {
       focusMode = true;
       focusedAttIndices = computeKeyIndices();
+      attFilterSet.clear();
+      defFilterSet.clear();
+      renderMultiSelect();
       refreshMatrix();
     }
+    // 显示全部（同时重置筛选）
     function disableFocusMode() {
       focusMode = false;
+      attFilterSet.clear();
+      defFilterSet.clear();
+      renderMultiSelect();
       refreshMatrix();
     }
 
@@ -841,6 +1068,111 @@
         focusedAttIndices = computeKeyIndices();
         refreshMatrix();
       }
+    }
+
+    // ---------- 下拉多选筛选 ----------
+    function renderMultiSelect() {
+      renderDropdown("att", attFilterSet);
+      renderDropdown("def", defFilterSet);
+      updateTriggerText("att", attFilterSet);
+      updateTriggerText("def", defFilterSet);
+    }
+
+    function renderDropdown(side, filterSet) {
+      const container = document.getElementById(side === "att" ? "attDropdown" : "defDropdown");
+      if (!container) return;
+      container.innerHTML = "";
+
+      for (let i = 0; i < TYPES.length; i++) {
+        const type = TYPES[i];
+        const color = typeThemeColors[type];
+        const checked = filterSet.has(i);
+
+        const label = document.createElement("label");
+        label.className = "multi-select-option";
+
+        const cb = document.createElement("input");
+        cb.type = "checkbox";
+        cb.checked = checked;
+        cb.addEventListener("change", () => {
+          if (checked) filterSet.delete(i);
+          else filterSet.add(i);
+          renderMultiSelect();
+          refreshMatrix();
+        });
+
+        const dot = document.createElement("span");
+        dot.style.cssText = `width:8px;height:8px;border-radius:50%;background:${color};display:inline-block;flex-shrink:0;`;
+
+        const text = document.createElement("span");
+        text.textContent = type;
+
+        label.appendChild(cb);
+        label.appendChild(dot);
+        label.appendChild(text);
+        container.appendChild(label);
+      }
+    }
+
+    function updateTriggerText(side, filterSet) {
+      const el = document.getElementById(side === "att" ? "attTriggerText" : "defTriggerText");
+      if (!el) return;
+      if (filterSet.size === 0) {
+        el.textContent = "全部";
+      } else if (filterSet.size <= 2) {
+        el.textContent = Array.from(filterSet).map(i => TYPES[i]).join(", ");
+      } else {
+        el.textContent = `${filterSet.size} 个已选`;
+      }
+    }
+
+    function toggleDropdown(side) {
+      const dropdown = document.getElementById(side === "att" ? "attDropdown" : "defDropdown");
+      const trigger = document.getElementById(side === "att" ? "attTrigger" : "defTrigger");
+      const isOpen = dropdown.classList.contains("open");
+
+      // 关闭所有其他下拉
+      document.querySelectorAll(".multi-select-dropdown.open").forEach(d => {
+        if (d !== dropdown) d.classList.remove("open");
+      });
+      document.querySelectorAll(".multi-select-trigger.open").forEach(t => {
+        if (t !== trigger) t.classList.remove("open");
+      });
+
+      if (isOpen) {
+        dropdown.classList.remove("open");
+        trigger.classList.remove("open");
+      } else {
+        dropdown.classList.add("open");
+        trigger.classList.add("open");
+      }
+    }
+
+    function bindMultiSelect() {
+      document.addEventListener("click", (e) => {
+        if (!e.target.closest(".multi-select")) {
+          document.querySelectorAll(".multi-select-dropdown.open").forEach(d => d.classList.remove("open"));
+          document.querySelectorAll(".multi-select-trigger.open").forEach(t => t.classList.remove("open"));
+        }
+      });
+      document.getElementById("attTrigger").addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleDropdown("att");
+      });
+      document.getElementById("defTrigger").addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleDropdown("def");
+      });
+      // 一键清空
+      document.querySelectorAll(".filter-clear").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const side = btn.dataset.side;
+          const set = side === "att" ? attFilterSet : defFilterSet;
+          set.clear();
+          renderMultiSelect();
+          refreshMatrix();
+        });
+      });
     }
 
     // 以下为原有的倍率列表渲染函数（保持不变，但需要适配反向提醒）
@@ -1031,6 +1363,8 @@
     }
 
     function init() {
+      renderMultiSelect();
+      bindMultiSelect();
       drawMatrix(null); // 初始完整矩阵
       initSelectors();
       bindSortEvents();
