@@ -946,9 +946,8 @@
     let currentDef1Idx = 0, currentDef2Idx = null;
     let currentTeraIdx = null;
     let focusMode = false;      // 矩阵聚焦模式
-    let focusedAttIndices = []; // 聚焦模式下显示的属性索引列表
 
-    // 筛选状态（芯片选择）
+    // 筛选状态
     let attFilterSet = new Set(); // 空 = 显示全部
     let defFilterSet = new Set(); // 空 = 显示全部
 
@@ -961,18 +960,14 @@
       return Array.from(indices).sort((a, b) => a - b);
     }
 
-    // 刷新矩阵渲染（基于 focusMode 和 focusedAttIndices）
+    // 刷新矩阵渲染（attFilterSet/defFilterSet 控制筛选）
     function refreshMatrix() {
-      if (focusMode) {
-        drawMatrix(focusedAttIndices);
-      } else {
-        drawMatrix(null);
-      }
+      drawMatrix();
     }
 
     // 绘制矩阵 (Grid 布局)
-    // attIndicesFilter: null=显示所有攻击方, 数组=仅显示指定索引; defFilterSet/attFilterSet 另作筛选
-    function drawMatrix(attIndicesFilter) {
+    // defFilterSet/attFilterSet 控制筛选
+    function drawMatrix() {
       const container = document.getElementById("matrixGrid");
       if (!container) return;
 
@@ -983,13 +978,12 @@
       } else {
         defIndices = TYPES.map((_, idx) => idx);
       }
-      // 行筛选（攻击方）：基础行集与 attFilterSet 取交集，空=显示全部
-      const baseIndices = (attIndicesFilter === null) ? TYPES.map((_, idx) => idx) : attIndicesFilter;
+      // 行筛选（攻击方），空=显示全部
       let attIndices;
       if (attFilterSet.size > 0) {
-        attIndices = baseIndices.filter(idx => attFilterSet.has(idx));
+        attIndices = TYPES.map((_, idx) => idx).filter(idx => attFilterSet.has(idx));
       } else {
-        attIndices = baseIndices;
+        attIndices = TYPES.map((_, idx) => idx);
       }
 
       // 空状态
@@ -1044,14 +1038,16 @@
       container.innerHTML = html;
     }
 
-    // 聚焦关键属性（同时重置筛选，确保聚焦效果完整可见）
+    // 聚焦关键属性：将攻击方筛选设为当前关键属性，实现聚焦效果
     function enableFocusMode() {
       focusMode = true;
-      focusedAttIndices = computeKeyIndices();
-      attFilterSet.clear();
+      const keys = computeKeyIndices();
+      attFilterSet = new Set(keys);
       defFilterSet.clear();
       renderMultiSelect();
       refreshMatrix();
+      renderResistanceList(currentDef1Idx, currentDef2Idx, currentOrder, currentTeraIdx);
+      renderTeraResistance(currentTeraIdx, currentDef1Idx, currentDef2Idx);
     }
     // 显示全部（同时重置筛选）
     function disableFocusMode() {
@@ -1060,12 +1056,15 @@
       defFilterSet.clear();
       renderMultiSelect();
       refreshMatrix();
+      renderResistanceList(currentDef1Idx, currentDef2Idx, currentOrder, currentTeraIdx);
+      renderTeraResistance(currentTeraIdx, currentDef1Idx, currentDef2Idx);
     }
 
-    // 当原始属性或太晶属性变化时，如果处于聚焦模式，则更新聚焦列表并刷新
+    // 当原始属性或太晶属性变化时，如果处于聚焦模式，则同步更新攻击方筛选
     function updateFocusIfNeeded() {
       if (focusMode) {
-        focusedAttIndices = computeKeyIndices();
+        attFilterSet = new Set(computeKeyIndices());
+        renderMultiSelect();
         refreshMatrix();
       }
     }
@@ -1099,6 +1098,8 @@
           else filterSet.add(i);
           renderMultiSelect();
           refreshMatrix();
+          renderResistanceList(currentDef1Idx, currentDef2Idx, currentOrder, currentTeraIdx);
+          renderTeraResistance(currentTeraIdx, currentDef1Idx, currentDef2Idx);
         });
 
         const dot = document.createElement("span");
@@ -1171,6 +1172,8 @@
           set.clear();
           renderMultiSelect();
           refreshMatrix();
+          renderResistanceList(currentDef1Idx, currentDef2Idx, currentOrder, currentTeraIdx);
+          renderTeraResistance(currentTeraIdx, currentDef1Idx, currentDef2Idx);
         });
       });
     }
@@ -1191,6 +1194,7 @@
       const reverseDefIdxs = [def1Idx];
       if (def2Idx !== null) reverseDefIdxs.push(def2Idx);
       if (teraIdx !== null) reverseDefIdxs.push(teraIdx);
+      attFilterSet.forEach(idx => reverseDefIdxs.push(idx));
       for (const r of sortedResults) {
         const themeColor = typeThemeColors[r.name] || "#A0A0A0";
         const textColor = getContrastColor(themeColor);
@@ -1232,6 +1236,7 @@
       const reverseDefIdxs = [def1Idx];
       if (def2Idx !== null) reverseDefIdxs.push(def2Idx);
       reverseDefIdxs.push(teraTypeIdx);
+      attFilterSet.forEach(idx => reverseDefIdxs.push(idx));
       for (const r of results) {
         const themeColor = typeThemeColors[r.name] || "#A0A0A0";
         const textColor = getContrastColor(themeColor);
@@ -1365,7 +1370,7 @@
     function init() {
       renderMultiSelect();
       bindMultiSelect();
-      drawMatrix(null); // 初始完整矩阵
+      drawMatrix(); // 初始完整矩阵
       initSelectors();
       bindSortEvents();
       bindMatrixControls();
