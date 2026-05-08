@@ -877,6 +877,11 @@
     }
 
     // ---------- 克制关系数据（按攻击方分组） ----------
+    const effectiveness = Array(18).fill().map(() => Array(18).fill(1));
+    function setEffect(attacker, defender, value) {
+      const aIdx = typeIndex[attacker], dIdx = typeIndex[defender];
+      if (aIdx !== undefined && dIdx !== undefined) effectiveness[aIdx][dIdx] = value;
+    }
     const strongAgainst = { // 2 倍克制
       "格斗":  ["一般", "岩石", "钢", "冰", "恶"],
       "飞行":  ["格斗", "虫", "草"],
