@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <title>宝可梦属性克制计算器 | 太晶化战术 + 双向克制预警 + 矩阵聚焦筛选</title>
+  <title data-i18n="title">宝可梦属性克制计算器 | 太晶化战术 + 双向克制预警 + 矩阵聚焦筛选</title>
   <style>
     * {
       box-sizing: border-box;
@@ -354,6 +354,27 @@
       opacity: 0.8;
     }
 
+    .lang-btn {
+      background: #e2e8f0;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.1s;
+      color: #64748b;
+    }
+
+    .lang-btn.active {
+      background: #1e293b;
+      color: white;
+    }
+
+    .lang-btn:hover {
+      opacity: 0.8;
+    }
+
     .matrix-grid {
       display: flex;
       flex-direction: column;
@@ -404,17 +425,19 @@
     }
 
     /* 左侧列固定（横向滚动时保持可见） */
-    .matrix-row > :first-child {
+    .matrix-row> :first-child {
       position: sticky;
       left: -2px;
       z-index: 11;
     }
+
     /* 表头列覆盖数据行 */
-    .matrix-header-row > * {
+    .matrix-header-row>* {
       z-index: 10;
     }
+
     /* 左上角单元格覆盖所有 */
-    .matrix-header-row > :first-child {
+    .matrix-header-row> :first-child {
       z-index: 12;
     }
 
@@ -517,12 +540,14 @@
       border-bottom: 1px solid #edf2f7;
       margin-bottom: 0.3rem;
     }
+
     .filter-group {
       display: flex;
       align-items: center;
       gap: 6px;
       flex-wrap: wrap;
     }
+
     .filter-label {
       font-size: 0.7rem;
       font-weight: 600;
@@ -530,10 +555,12 @@
       white-space: nowrap;
       min-width: 4.2em;
     }
+
     .multi-select {
       position: relative;
       min-width: 130px;
     }
+
     .multi-select-trigger {
       display: flex;
       align-items: center;
@@ -552,21 +579,26 @@
       white-space: nowrap;
       max-width: 220px;
     }
+
     .multi-select-trigger:hover {
       border-color: #cbd5e1;
     }
+
     .multi-select-trigger.open {
       border-color: #3b82f6;
     }
+
     .multi-select-arrow {
       font-size: 0.6rem;
       color: #94a3b8;
       transition: transform 0.15s;
       flex-shrink: 0;
     }
+
     .multi-select-arrow.open {
       transform: rotate(180deg);
     }
+
     .multi-select-dropdown {
       position: absolute;
       top: calc(100% + 4px);
@@ -582,9 +614,11 @@
       overflow-y: auto;
       display: none;
     }
+
     .multi-select-dropdown.open {
       display: block;
     }
+
     .multi-select-option {
       display: flex;
       align-items: center;
@@ -596,9 +630,11 @@
       font-weight: 500;
       transition: 0.05s;
     }
+
     .multi-select-option:hover {
       background: #f1f5f9;
     }
+
     .multi-select-option input[type="checkbox"] {
       margin: 0;
       accent-color: #3b82f6;
@@ -621,6 +657,7 @@
       transition: 0.1s;
       line-height: 1;
     }
+
     .filter-clear:hover {
       background: #fee2e2;
       border-color: #fca5a5;
@@ -702,15 +739,18 @@
         font-size: 0.8rem;
         padding: 6px 12px;
       }
+
       .multi-select-dropdown {
         min-width: 180px;
         max-height: 50vh;
         padding: 8px;
       }
+
       .multi-select-option {
         padding: 10px 10px;
         font-size: 0.85rem;
       }
+
       .multi-select-option input[type="checkbox"] {
         width: 18px;
         height: 18px;
@@ -732,69 +772,78 @@
 <body>
   <div class="container">
     <div class="header">
-      <h1>✨ 宝可梦属性克制计算器 ✨</h1>
-      <div class="sub">双属性抗性 · 太晶化战术 · 双向克制预警 · 矩阵聚焦筛选</div>
+      <h1>✨ <span data-i18n="app_name">宝可梦属性克制计算器</span> ✨</h1>
+      <div class="sub" data-i18n="subtitle">双属性抗性 · 太晶化战术 · 双向克制预警 · 矩阵聚焦筛选</div>
+    </div>
+
+    <!-- 语言切换 -->
+    <div style="text-align:right;margin-bottom:8px;display:flex;gap:4px;justify-content:flex-end;">
+      <button class="lang-btn" data-lang="chs" data-i18n="lang_chs">简体</button>
+      <button class="lang-btn" data-lang="cht" data-i18n="lang_cht">繁體</button>
+      <button class="lang-btn" data-lang="en" data-i18n="lang_en">EN</button>
     </div>
 
     <!-- 属性选择器 -->
     <div class="selector-card">
-      <div class="selector-title">防御方属性组合</div>
+      <div class="selector-title" data-i18n="def_combo_title">防御方属性组合</div>
       <div class="dual-select">
         <div class="select-group">
-          <label>第一属性 🛡️</label>
+          <label><span data-i18n="def_type1">第一属性</span> 🛡️</label>
           <select id="typeA"></select>
         </div>
         <div class="select-group">
-          <label>第二属性 (可选) 🧬</label>
+          <label><span data-i18n="def_type2">第二属性 (可选)</span> 🧬</label>
           <select id="typeB">
-            <option value="none">无 (单属性)</option>
+            <option value="none" data-i18n="def_none">无 (单属性)</option>
           </select>
         </div>
       </div>
       <div class="badge-combo" id="comboDisplay">
-        <span>当前组合：</span>
+        <span data-i18n="combo_label">当前组合：</span>
         <span class="combo-type" id="comboText">一般</span>
-        <span class="combo-note">▼ 双属性承受倍率 (防御方组合)</span>
+        <span class="combo-note" data-i18n="combo_note">▼ 双属性承受倍率 (防御方组合)</span>
       </div>
     </div>
 
     <!-- 双属性承受倍率结果 -->
     <div class="result-section">
       <div class="result-header">
-        <span>⚡ 原始属性承受伤害倍率 (攻击方 → 防御组合)</span>
+        <span>⚡ <span data-i18n="resist_title">原始属性承受伤害倍率 (攻击方 → 防御组合)</span></span>
         <div class="sort-buttons">
-          <button id="fixedSortBtn" class="sort-btn primary" data-sort="fixed">📋 固定顺序</button>
-          <button id="multiplierSortBtn" class="sort-btn" data-sort="multiplier">📊 按倍率排序</button>
+          <button id="fixedSortBtn" class="sort-btn primary" data-sort="fixed">📋 <span
+              data-i18n="sort_fixed">固定顺序</span></button>
+          <button id="multiplierSortBtn" class="sort-btn" data-sort="multiplier">📊 <span
+              data-i18n="sort_multiplier">按倍率排序</span></button>
         </div>
       </div>
       <div id="resistanceList" class="grid-list"></div>
       <div class="footnote" style="text-align:left; margin-top:0; padding:0 1rem 0.8rem 1rem;">
-        ⚠️ <strong>反向克制预警</strong>：当属性被防御方的原始属性（及太晶属性，如果已选择）所克制，则显示“被 属性名 克制”。<br>
-        💡 太晶化后，原始属性列表仍会基于“原始属性+太晶属性”进行反向预警，太晶列表同理。
+        ⚠️ <strong data-i18n="resist_footnote">反向克制预警：当属性被防御方的原始属性（及太晶属性，如果已选择）所克制，则显示"被 属性名 克制"。</strong><br>
+        💡 <span data-i18n="resist_footnote2">太晶化后，原始属性列表仍会基于"原始属性+太晶属性"进行反向预警，太晶列表同理。</span>
       </div>
     </div>
 
     <!-- 太晶化独立参考区域 -->
     <div class="terastal-section" id="terastalSection">
       <div class="terastal-header">
-        <h3>✨ 太晶化战术参考</h3>
-        <span class="terastal-badge">第九世代机制</span>
-        <span class="tera-note">太晶化后属性替换为太晶属性，独立于原始双属性</span>
+        <h3>✨ <span data-i18n="tera_title">太晶化战术参考</span></h3>
+        <span class="terastal-badge" data-i18n="tera_badge">第九世代机制</span>
+        <span class="tera-note" data-i18n="tera_note_header">太晶化后属性替换为太晶属性，独立于原始双属性</span>
       </div>
       <div class="tera-select-group">
-        <label class="tera-result-title">🔮 选择太晶属性 (参考用)</label>
+        <label class="tera-result-title">🔮 <span data-i18n="tera_select_label">选择太晶属性 (参考用)</span></label>
         <select id="teraType">
-          <option value="none">无 (未太晶化)</option>
+          <option value="none" data-i18n="tera_none">无 (未太晶化)</option>
         </select>
       </div>
       <div id="teraResultArea">
-        <div class="tera-result-title">💎 太晶化后承受倍率 (仅参考太晶属性)</div>
+        <div class="tera-result-title">💎 <span data-i18n="tera_result_title">太晶化后承受倍率 (仅参考太晶属性)</span></div>
         <div id="teraResistanceList" class="grid-list" style="padding: 0.8rem; background: transparent;">
           <!-- 太晶化倍率展示区 -->
         </div>
         <div class="tera-note" style="margin-top: 10px; display: inline-block;">
-          💡 说明：太晶化后宝可梦属性变为太晶属性，原始属性不再影响防御端。<br>
-          ⚠️ <strong>反向克制预警</strong>：若属性被原始属性或太晶属性克制，则会显示“被 属性名 克制”。
+          💡 <span data-i18n="tera_footnote">说明：太晶化后宝可梦属性变为太晶属性，原始属性不再影响防御端。</span><br>
+          ⚠️ <strong data-i18n="tera_footnote2">反向克制预警：若属性被原始属性或太晶属性克制，则会显示"被 属性名 克制"。</strong>
         </div>
       </div>
     </div>
@@ -802,43 +851,43 @@
     <!-- 完整克制关系矩阵 + 筛选功能 -->
     <div class="matrix-section">
       <div class="matrix-title">
-        <span>📊 完整克制关系表 (攻击方 × 防御方)</span>
+        <span>📊 <span data-i18n="matrix_title">完整克制关系表 (攻击方 × 防御方)</span></span>
         <div class="matrix-controls">
-          <button id="showAllBtn" class="matrix-btn primary">🔓 显示全部</button>
-          <button id="focusKeyBtn" class="matrix-btn">🎯 聚焦关键属性</button>
+          <button id="showAllBtn" class="matrix-btn primary">🔓 <span data-i18n="show_all">显示全部</span></button>
+          <button id="focusKeyBtn" class="matrix-btn">🎯 <span data-i18n="focus_key">聚焦关键属性</span></button>
         </div>
       </div>
       <div class="matrix-filters">
         <div class="filter-group">
-          <span class="filter-label">攻击方</span>
+          <span class="filter-label" data-i18n="filter_att">攻击方</span>
           <div class="multi-select" id="attMultiSelect">
             <div class="multi-select-trigger" id="attTrigger">
-              <span id="attTriggerText">全部</span>
+              <span id="attTriggerText" data-i18n="filter_all">全部</span>
               <span class="multi-select-arrow">▾</span>
             </div>
             <div class="multi-select-dropdown" id="attDropdown"></div>
           </div>
-          <button class="filter-clear" data-side="att" title="清空攻击方筛选">✕</button>
+          <button class="filter-clear" data-side="att" data-i18n-title="filter_clear_att" title="清空攻击方筛选">✕</button>
         </div>
         <div class="filter-group">
-          <span class="filter-label">防御方</span>
+          <span class="filter-label" data-i18n="filter_def">防御方</span>
           <div class="multi-select" id="defMultiSelect">
             <div class="multi-select-trigger" id="defTrigger">
-              <span id="defTriggerText">全部</span>
+              <span id="defTriggerText" data-i18n="filter_all">全部</span>
               <span class="multi-select-arrow">▾</span>
             </div>
             <div class="multi-select-dropdown" id="defDropdown"></div>
           </div>
-          <button class="filter-clear" data-side="def" title="清空防御方筛选">✕</button>
+          <button class="filter-clear" data-side="def" data-i18n-title="filter_clear_def" title="清空防御方筛选">✕</button>
         </div>
       </div>
       <div style="overflow-x: auto;">
         <div class="matrix-grid" id="matrixGrid"></div>
       </div>
       <div class="footnote">
-        * 基于第八代/第九代标准克制表 · 双属性抵抗倍率 = 两属性倍率相乘 (免疫0倍则总为0)<br>
-        🎨 太晶化后防御属性替换为太晶属性，提供独立的倍率参考 + 反向克制提醒<br>
-        🔍 点击「聚焦关键属性」仅显示当前原始属性（及太晶属性）作为攻击方的行，方便战术分析。
+        * <span data-i18n="matrix_footnote">基于第八代/第九代标准克制表 · 双属性抵抗倍率 = 两属性倍率相乘 (免疫0倍则总为0)</span><br>
+        🎨 <span data-i18n="matrix_footnote2">太晶化后防御属性替换为太晶属性，提供独立的倍率参考 + 反向克制提醒</span><br>
+        🔍 <span data-i18n="matrix_footnote3">点击「聚焦关键属性」仅显示当前原始属性（及太晶属性）作为攻击方的行，方便战术分析。</span>
       </div>
     </div>
   </div>
@@ -848,19 +897,58 @@
     // 1. 常量数据定义
     // ====================================================================
 
-    const TYPES = [
-      "一般", "格斗", "飞行", "毒", "地面", "岩石", "虫", "幽灵", "钢",
-      "火", "水", "草", "电", "超能力", "冰", "龙", "恶", "妖精"
-    ];
+    const TYPE_IDS = ["normal", "fighting", "flying", "poison", "ground", "rock", "bug", "ghost", "steel", "fire", "water", "grass", "electric", "psychic", "ice", "dragon", "dark", "fairy"];
+    const TYPE_COUNT = TYPE_IDS.length;
+    // 内嵌简体中文属性名（JSON 加载失败时的 fallback）
+    const FALLBACK_NAMES = ["一般", "格斗", "飞行", "毒", "地面", "岩石", "虫", "幽灵", "钢", "火", "水", "草", "电", "超能力", "冰", "龙", "恶", "妖精"];
     const typeIndex = {};
-    TYPES.forEach((t, idx) => { typeIndex[t] = idx; });
+    TYPE_IDS.forEach((id, idx) => { typeIndex[id] = idx; });
+
+    // ---------- 国际化 ----------
+    let currentLang = localStorage.getItem("lang") || "chs";
+    const langData = { chs: null, cht: null, en: null };
+    function tn(idx) { return langData[currentLang]?.types?.[TYPE_IDS[idx]] ?? FALLBACK_NAMES[idx]; }
+    // UI 文字 fallback（简体中文）
+    const FALLBACK_UI = {
+      title: "宝可梦属性克制计算器", app_name: "宝可梦属性克制计算器", subtitle: "双属性抗性 · 太晶化战术 · 双向克制预警 · 矩阵聚焦筛选",
+      def_combo_title: "防御方属性组合", def_type1: "第一属性", def_type2: "第二属性 (可选)", def_none: "无 (单属性)",
+      combo_label: "当前组合：", combo_note: "双属性承受倍率 (防御方组合)",
+      resist_title: "原始属性承受伤害倍率 (攻击方 → 防御组合)",
+      sort_fixed: "固定顺序", sort_multiplier: "按倍率排序",
+      resist_footnote: "反向克制预警：当属性被防御方的原始属性所克制，则显示被 属性名 克制。",
+      resist_footnote2: "太晶化后原始属性列表仍会基于原始属性+太晶属性进行反向预警，太晶列表同理。",
+      tera_title: "太晶化战术参考", tera_badge: "第九世代机制", tera_note_header: "太晶化后属性替换为太晶属性独立于原始双属性",
+      tera_select_label: "选择太晶属性 (参考用)", tera_none: "无 (未太晶化)",
+      tera_result_title: "太晶化后承受倍率 (仅参考太晶属性)",
+      tera_footnote: "说明：太晶化后宝可梦属性变为太晶属性，原始属性不再影响防御端。",
+      tera_footnote2: "反向克制预警：若属性被原始属性或太晶属性克制则会显示被 属性名 克制。",
+      matrix_title: "完整克制关系表 (攻击方 × 防御方)", show_all: "显示全部", focus_key: "聚焦关键属性",
+      filter_att: "攻击方", filter_def: "防御方", filter_all: "全部",
+      filter_clear_att: "清空攻击方筛选", filter_clear_def: "清空防御方筛选", filter_selected: "{n} 个已选",
+      matrix_footnote: "基于第八代/第九代标准克制表 · 双属性抵抗倍率 = 两属性倍率相乘 (免疫0倍则总为0)",
+      matrix_footnote2: "太晶化后防御属性替换为太晶属性，提供独立的倍率参考 + 反向克制提醒",
+      matrix_footnote3: "点击聚焦关键属性仅显示当前原始属性及太晶属性作为攻击方的行方便战术分析。",
+      empty_matrix: "请至少选择一个属性进行筛选", empty_tera: "请选择一个太晶属性查看太晶化后的承受倍率",
+      reverse_warning: "被 {types} 克制", alert_dup_type: "双属性不能相同已自动清除第二属性",
+      diag_defender: "防御方", diag_attacker: "攻击方", lang_chs: "简体", lang_cht: "繁體", lang_en: "EN",
+    };
+    function _(key) { return langData[currentLang]?.ui?.[key] ?? FALLBACK_UI[key]; }
+
+    async function loadLang(lang) {
+      try {
+        const res = await fetch(`lang/${lang}.json`);
+        langData[lang] = await res.json();
+      } catch {
+        // fallback 语言已内嵌
+      }
+    }
 
     const typeThemeColors = {
-      "一般": "#bbbbaa", "格斗": "#bb5544", "飞行": "#6699ff", "毒": "#aa5599",
-      "地面": "#ddbb55", "岩石": "#bbaa66", "虫": "#aabb22", "幽灵": "#6666bb",
-      "钢": "#aaaabb", "火": "#ff4422", "水": "#3399ff", "草": "#77cc55",
-      "电": "#ffcc33", "超能力": "#ff5599", "冰": "#77ddff", "龙": "#7766ee",
-      "恶": "#775544", "妖精": "#ffaaff"
+      normal: "#bbbbaa", fighting: "#bb5544", flying: "#6699ff", poison: "#aa5599",
+      ground: "#ddbb55", rock: "#bbaa66", bug: "#aabb22", ghost: "#6666bb",
+      steel: "#aaaabb", fire: "#ff4422", water: "#3399ff", grass: "#77cc55",
+      electric: "#ffcc33", psychic: "#ff5599", ice: "#77ddff", dragon: "#7766ee",
+      dark: "#775544", fairy: "#ffaaff"
     };
     /**
      * 根据背景色亮度选择白色或深色文字，确保可读性
@@ -877,65 +965,65 @@
     }
 
     // ---------- 克制关系数据（按攻击方分组） ----------
-    const effectiveness = Array(18).fill().map(() => Array(18).fill(1));
+    const effectiveness = Array(TYPE_COUNT).fill().map(() => Array(TYPE_COUNT).fill(1));
     function setEffect(attacker, defender, value) {
       const aIdx = typeIndex[attacker], dIdx = typeIndex[defender];
       if (aIdx !== undefined && dIdx !== undefined) effectiveness[aIdx][dIdx] = value;
     }
-    const strongAgainst = { // 2 倍克制
-      "格斗":  ["一般", "岩石", "钢", "冰", "恶"],
-      "飞行":  ["格斗", "虫", "草"],
-      "毒":    ["草", "妖精"],
-      "地面":  ["毒", "岩石", "钢", "火", "电"],
-      "岩石":  ["飞行", "虫", "火", "冰"],
-      "虫":    ["草", "超能力", "恶"],
-      "幽灵":  ["幽灵", "超能力"],
-      "钢":    ["岩石", "冰", "妖精"],
-      "火":    ["虫", "钢", "草", "冰"],
-      "水":    ["地面", "岩石", "火"],
-      "草":    ["地面", "岩石", "水"],
-      "电":    ["飞行", "水"],
-      "超能力":["格斗", "毒"],
-      "冰":    ["飞行", "地面", "草", "龙"],
-      "龙":    ["龙"],
-      "恶":    ["幽灵", "超能力"],
-      "妖精":  ["格斗", "龙", "恶"],
+    const strongAgainst = {
+      fighting: ["normal", "rock", "steel", "ice", "dark"],
+      flying: ["fighting", "bug", "grass"],
+      poison: ["grass", "fairy"],
+      ground: ["poison", "rock", "steel", "fire", "electric"],
+      rock: ["flying", "bug", "fire", "ice"],
+      bug: ["grass", "psychic", "dark"],
+      ghost: ["ghost", "psychic"],
+      steel: ["rock", "ice", "fairy"],
+      fire: ["bug", "steel", "grass", "ice"],
+      water: ["ground", "rock", "fire"],
+      grass: ["ground", "rock", "water"],
+      electric: ["flying", "water"],
+      psychic: ["fighting", "poison"],
+      ice: ["flying", "ground", "grass", "dragon"],
+      dragon: ["dragon"],
+      dark: ["ghost", "psychic"],
+      fairy: ["fighting", "dragon", "dark"],
     };
-    const weakAgainst = { // ½ 倍被抵抗
-      "一般":  ["岩石", "钢"],
-      "格斗":  ["飞行", "毒", "虫", "超能力", "妖精"],
-      "飞行":  ["岩石", "钢", "电"],
-      "毒":    ["毒", "地面", "岩石", "幽灵"],
-      "地面":  ["虫", "草"],
-      "岩石":  ["格斗", "地面", "钢"],
-      "虫":    ["格斗", "飞行", "毒", "幽灵", "钢", "火", "妖精"],
-      "幽灵":  ["恶"],
-      "钢":    ["钢", "火", "水", "电"],
-      "火":    ["岩石", "火", "水", "龙"],
-      "水":    ["水", "草", "龙"],
-      "草":    ["飞行", "毒", "虫", "钢", "火", "草", "龙"],
-      "电":    ["草", "电", "龙"],
-      "超能力":["钢", "超能力"],
-      "冰":    ["钢", "火", "水", "冰"],
-      "龙":    ["钢"],
-      "恶":    ["格斗", "恶", "妖精"],
-      "妖精":  ["毒", "钢", "火"],
+    const weakAgainst = {
+      normal: ["rock", "steel"],
+      fighting: ["flying", "poison", "bug", "psychic", "fairy"],
+      flying: ["rock", "steel", "electric"],
+      poison: ["poison", "ground", "rock", "ghost"],
+      ground: ["bug", "grass"],
+      rock: ["fighting", "ground", "steel"],
+      bug: ["fighting", "flying", "poison", "ghost", "steel", "fire", "fairy"],
+      ghost: ["dark"],
+      steel: ["steel", "fire", "water", "electric"],
+      fire: ["rock", "fire", "water", "dragon"],
+      water: ["water", "grass", "dragon"],
+      grass: ["flying", "poison", "bug", "steel", "fire", "grass", "dragon"],
+      electric: ["grass", "electric", "dragon"],
+      psychic: ["steel", "psychic"],
+      ice: ["steel", "fire", "water", "ice"],
+      dragon: ["steel"],
+      dark: ["fighting", "dark", "fairy"],
+      fairy: ["poison", "steel", "fire"],
     };
-    const immuneAgainst = { // 0 倍免疫
-      "一般":  ["幽灵"],
-      "格斗":  ["幽灵"],
-      "毒":    ["钢"],
-      "地面":  ["飞行"],
-      "幽灵":  ["一般"],
-      "电":    ["地面"],
-      "超能力":["恶"],
-      "龙":    ["妖精"],
+    const immuneAgainst = {
+      normal: ["ghost"],
+      fighting: ["ghost"],
+      poison: ["steel"],
+      ground: ["flying"],
+      ghost: ["normal"],
+      electric: ["ground"],
+      psychic: ["dark"],
+      dragon: ["fairy"],
     };
 
     function buildRelations(strong, weak, immune) {
       const r = [];
       for (const [att, defs] of Object.entries(strong)) defs.forEach(def => r.push({ att, def, val: 2 }));
-      for (const [att, defs] of Object.entries(weak))   defs.forEach(def => r.push({ att, def, val: 0.5 }));
+      for (const [att, defs] of Object.entries(weak)) defs.forEach(def => r.push({ att, def, val: 0.5 }));
       for (const [att, defs] of Object.entries(immune)) defs.forEach(def => r.push({ att, def, val: 0 }));
       return r;
     }
@@ -1003,7 +1091,7 @@
         if (defIdx === null || defIdx === undefined) continue;
         const val = getSingleEffectiveness(defIdx, attIdx);
         if (val > 1) {
-          const typeName = TYPES[defIdx];
+          const typeName = tn(defIdx);
           if (!seen.has(typeName)) {
             seen.add(typeName);
             result.push(typeName);
@@ -1048,9 +1136,9 @@
      */
     function getFilteredIndices(filterSet) {
       if (filterSet.size > 0) {
-        return TYPES.map((_, idx) => idx).filter(idx => filterSet.has(idx));
+        return TYPE_IDS.map((_, idx) => idx).filter(idx => filterSet.has(idx));
       }
-      return TYPES.map((_, idx) => idx);
+      return TYPE_IDS.map((_, idx) => idx);
     }
 
     /**
@@ -1074,10 +1162,11 @@
      */
     function buildMatrixHeaderRow(defIndices, gridTemplate) {
       let html = `<div class="matrix-row matrix-header-row" style="grid-template-columns:${gridTemplate};">`;
-      html += `<div class="diagonal-header"><div class="diagonal-line"></div><div class="top-right">防御方</div><div class="bottom-left">攻击方</div></div>`;
+      html += `<div class="diagonal-header"><div class="diagonal-line"></div><div class="top-right">${_("diag_defender")}</div><div class="bottom-left">${_("diag_attacker")}</div></div>`;
       for (const defIdx of defIndices) {
-        const defType = TYPES[defIdx];
-        const bgColor = typeThemeColors[defType] || "#aaaaaa";
+        const defType = tn(defIdx);
+        const defId = TYPE_IDS[defIdx];
+        const bgColor = typeThemeColors[defId] || "#aaaaaa";
         const textColor = getContrastColor(bgColor);
         html += `<div class="matrix-col-header" style="background:${bgColor};color:${textColor};">${defType}</div>`;
       }
@@ -1093,8 +1182,9 @@
      * @returns {string}
      */
     function buildMatrixDataRow(attIdx, defIndices, gridTemplate) {
-      const attName = TYPES[attIdx];
-      const bgColor = typeThemeColors[attName] || "#aaaaaa";
+      const attName = tn(attIdx);
+      const attId = TYPE_IDS[attIdx];
+      const bgColor = typeThemeColors[attId] || "#aaaaaa";
       const textColor = getContrastColor(bgColor);
       const rowBg = bgColor + "50";
 
@@ -1123,7 +1213,7 @@
       const attIndices = getFilteredIndices(attFilterSet);
 
       if (attIndices.length === 0 || defIndices.length === 0) {
-        container.innerHTML = `<div style="text-align:center;padding:2rem;color:#94a3b8;font-size:0.9rem;">请至少选择一个属性进行筛选</div>`;
+        container.innerHTML = `<div style="text-align:center;padding:2rem;color:#94a3b8;font-size:0.9rem;">${_("empty_matrix")}</div>`;
         return;
       }
 
@@ -1198,9 +1288,9 @@
       if (!container) return;
       container.innerHTML = "";
 
-      for (let i = 0; i < TYPES.length; i++) {
-        const type = TYPES[i];
-        const color = typeThemeColors[type];
+      for (let i = 0; i < TYPE_COUNT; i++) {
+        const type = tn(i);
+        const color = typeThemeColors[TYPE_IDS[i]];
         const checked = filterSet.has(i);
 
         const label = document.createElement("label");
@@ -1240,11 +1330,11 @@
       const el = document.getElementById(side === "att" ? "attTriggerText" : "defTriggerText");
       if (!el) return;
       if (filterSet.size === 0) {
-        el.textContent = "全部";
+        el.textContent = _("filter_all");
       } else if (filterSet.size <= 2) {
-        el.textContent = Array.from(filterSet).map(i => TYPES[i]).join(", ");
+        el.textContent = Array.from(filterSet).map(i => tn(i)).join(", ");
       } else {
-        el.textContent = `${filterSet.size} 个已选`;
+        el.textContent = _("filter_selected").replace("{n}", filterSet.size);
       }
     }
 
@@ -1316,8 +1406,8 @@
      * @param {number[]} reverseDefIdxs
      */
     function createTypeCardElement(container, typeIdx, multiplier, reverseDefIdxs) {
-      const typeName = TYPES[typeIdx];
-      const themeColor = typeThemeColors[typeName] || "#A0A0A0";
+      const typeName = tn(typeIdx);
+      const themeColor = typeThemeColors[TYPE_IDS[typeIdx]] || "#A0A0A0";
       const textColor = getContrastColor(themeColor);
       const card = document.createElement("div");
       card.className = `type-card ${getClassByMultiplier(multiplier)}`;
@@ -1326,7 +1416,7 @@
       let reverseHtml = "";
       const reverseTypes = getReverseTypes(typeIdx, reverseDefIdxs);
       if (reverseTypes.length > 0) {
-        reverseHtml = `<div class="reverse-warning">⚠️被 ${reverseTypes.join(", ")} 克制</div>`;
+        reverseHtml = `<div class="reverse-warning">⚠️${_("reverse_warning").replace("{types}", reverseTypes.join(", "))}</div>`;
       }
       card.innerHTML = `
         <div class="card-main-row">
@@ -1349,8 +1439,8 @@
       const container = document.getElementById("resistanceList");
       if (!container) return;
       const rawResults = [];
-      for (let i = 0; i < TYPES.length; i++) {
-        rawResults.push({ name: TYPES[i], multiplier: getCombinedEffectiveness(i, def1Idx, def2Idx), idx: i });
+      for (let i = 0; i < TYPE_COUNT; i++) {
+        rawResults.push({ name: tn(i), multiplier: getCombinedEffectiveness(i, def1Idx, def2Idx), idx: i });
       }
       let sortedResults = [...rawResults];
       if (order === "fixed") sortedResults.sort((a, b) => a.idx - b.idx);
@@ -1373,12 +1463,12 @@
       const container = document.getElementById("teraResistanceList");
       if (!container) return;
       if (teraTypeIdx === null) {
-        container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:20px; color:#6b21a5; background:#fdfcff; border-radius:40px;">✨ 请选择一个太晶属性，查看太晶化后的承受倍率</div>`;
+        container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:20px; color:#6b21a5; background:#fdfcff; border-radius:40px;">✨${_("empty_tera")}</div>`;
         return;
       }
       const results = [];
-      for (let i = 0; i < TYPES.length; i++) {
-        results.push({ name: TYPES[i], multiplier: getSingleEffectiveness(i, teraTypeIdx), idx: i });
+      for (let i = 0; i < TYPE_COUNT; i++) {
+        results.push({ name: tn(i), multiplier: getSingleEffectiveness(i, teraTypeIdx), idx: i });
       }
       results.sort((a, b) => a.idx - b.idx);
       container.innerHTML = "";
@@ -1408,7 +1498,7 @@
       currentDef1Idx = def1Idx;
       currentDef2Idx = def2Idx;
       const comboTextSpan = document.getElementById("comboText");
-      comboTextSpan.innerText = def2Name ? `${def1Name} + ${def2Name}` : `${def1Name}`;
+      comboTextSpan.innerText = def2Idx !== null ? `${tn(def1Idx)} + ${tn(def2Idx)}` : tn(def1Idx);
       renderResistanceList(def1Idx, def2Idx, currentOrder, currentTeraIdx);
       renderTeraResistance(currentTeraIdx, def1Idx, def2Idx);
       updateFocusIfNeeded();
@@ -1437,15 +1527,17 @@
       const typeASelect = document.getElementById("typeA");
       const typeBSelect = document.getElementById("typeB");
       const teraSelect = document.getElementById("teraType");
-      for (let t of TYPES) {
-        const optA = document.createElement("option"); optA.value = t; optA.textContent = t;
+      for (let idx = 0; idx < TYPE_COUNT; idx++) {
+        const name = tn(idx);
+        const id = TYPE_IDS[idx];
+        const optA = document.createElement("option"); optA.value = id; optA.textContent = name;
         typeASelect.appendChild(optA);
-        const optB = document.createElement("option"); optB.value = t; optB.textContent = t;
+        const optB = document.createElement("option"); optB.value = id; optB.textContent = name;
         typeBSelect.appendChild(optB);
-        const optTera = document.createElement("option"); optTera.value = t; optTera.textContent = t;
+        const optTera = document.createElement("option"); optTera.value = id; optTera.textContent = name;
         teraSelect.appendChild(optTera);
       }
-      typeASelect.value = "一般";
+      typeASelect.value = "normal";
       typeBSelect.value = "none";
       teraSelect.value = "none";
       typeASelect.addEventListener("change", () => {
@@ -1454,7 +1546,7 @@
       });
       typeBSelect.addEventListener("change", () => {
         if (typeBSelect.value !== "none" && typeBSelect.value === typeASelect.value) {
-          alert("双属性不能相同，已自动清除第二属性");
+          alert(_("alert_dup_type"));
           typeBSelect.value = "none";
         }
         updateUI();
@@ -1502,14 +1594,70 @@
       });
     }
 
+    /** 应用当前语言：刷新 data-i18n 文本节点 */
+    function applyLanguage() {
+      document.title = _("title");
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        el.textContent = _(el.dataset.i18n);
+      });
+      document.querySelectorAll("[data-i18n-html]").forEach(el => {
+        el.innerHTML = _(el.dataset.i18nHtml).replace(/\n/g, "<br>");
+      });
+      document.querySelectorAll("[data-i18n-title]").forEach(el => {
+        el.title = _(el.dataset.i18nTitle);
+      });
+    }
+
+    /** 切换语言后更新所有 select 的选项显示文本 */
+    function refreshSelectorsLang() {
+      document.querySelectorAll("#typeA option, #typeB option, #teraType option").forEach(opt => {
+        if (opt.value !== "none") opt.textContent = tn(typeIndex[opt.value]);
+      });
+    }
+
+    /** 切换当前语言：更新文本 + 重建动态内容 */
+    async function switchLang(lang) {
+      currentLang = lang;
+      localStorage.setItem("lang", lang);
+      await loadLang(lang);
+      applyLanguage();
+      refreshSelectorsLang();
+      renderMultiSelect();
+      drawMatrix();
+      renderResistanceList(currentDef1Idx, currentDef2Idx, currentOrder, currentTeraIdx);
+      renderTeraResistance(currentTeraIdx, currentDef1Idx, currentDef2Idx);
+    }
+
+    /** 绑定语言切换按钮事件 */
+    function bindLangSwitcher() {
+      document.querySelectorAll(".lang-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".lang-btn").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          switchLang(btn.dataset.lang);
+        });
+      });
+    }
+
     /** 主初始化入口：渲染筛选、绑定事件、绘制初始矩阵 */
     function init() {
+      bindLangSwitcher();
+      document.querySelector(`.lang-btn[data-lang="${currentLang}"]`)?.classList.add("active");
       renderMultiSelect();
       bindMultiSelect();
       drawMatrix();
       initSelectors();
       bindSortEvents();
       bindMatrixControls();
+      // 异步加载语言 JSON 并应用
+      loadLang(currentLang).then(() => {
+        applyLanguage();
+        refreshSelectorsLang();
+        renderMultiSelect();
+        drawMatrix();
+        renderResistanceList(currentDef1Idx, currentDef2Idx, currentOrder, currentTeraIdx);
+        renderTeraResistance(currentTeraIdx, currentDef1Idx, currentDef2Idx);
+      });
     }
     init();
   </script>
