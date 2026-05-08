@@ -370,7 +370,6 @@
     .matrix-header-row {
       position: sticky;
       top: 0;
-      z-index: 10;
     }
 
     .matrix-col-header {
@@ -404,13 +403,28 @@
       justify-content: center;
     }
 
+    /* 左侧列固定（横向滚动时保持可见） */
+    .matrix-row > :first-child {
+      position: sticky;
+      left: -2px;
+      z-index: 11;
+    }
+    /* 表头列覆盖数据行 */
+    .matrix-header-row > * {
+      z-index: 10;
+    }
+    /* 左上角单元格覆盖所有 */
+    .matrix-header-row > :first-child {
+      z-index: 12;
+    }
+
     .diagonal-header {
       position: relative;
       height: 3.5em;
       overflow: hidden;
       padding: 0;
       border: 1px solid #dce5ef;
-      z-index: 11;
+      background-color: #fff;
     }
 
     .diagonal-header .diagonal-line {
@@ -994,7 +1008,7 @@
       }
 
       // 构建 grid 列模板：两侧固定6em，中间每列至少3em并按比例铺满剩余空间
-      const gridTemplate = `6em repeat(${defIndices.length}, minmax(3em,1fr)) 6em`;
+      const gridTemplate = `6em repeat(${defIndices.length}, minmax(3em,1fr))`;
 
       let html = "";
 
@@ -1007,7 +1021,6 @@
         const textColor = getContrastColor(bgColor);
         html += `<div class="matrix-col-header" style="background:${bgColor};color:${textColor};">${defType}</div>`;
       }
-      html += `<div class="diagonal-header diagonal-header-right"><div class="diagonal-line"></div><div class="top-left">防御方</div><div class="bottom-right">攻击方</div></div>`;
       html += `</div>`;
 
       // 数据行
@@ -1032,7 +1045,6 @@
           html += `<div class="matrix-cell ${cellClass}"><strong>${display}</strong></div>`;
         }
 
-        html += `<div class="matrix-row-header" style="background:${bgColor};color:${textColor};">${attName}</div>`;
         html += `</div>`;
       }
 
